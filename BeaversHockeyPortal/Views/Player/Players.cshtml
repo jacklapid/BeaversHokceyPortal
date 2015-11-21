@@ -1,0 +1,32 @@
+﻿@model IEnumerable<BeaversHockeyPortal.Models.PlayerViewModels>
+@{
+    ViewBag.Title = "Players";
+}
+
+<h2>Players</h2>
+@foreach (var player in Model)
+{
+    <div class="row">
+        @player.FullName
+        <div class="col-md-4">
+            @if (player.PositionId == (int)DataModel.Enums.PlayerPositionEnum.Goalie)
+                {
+                <img src="~/Images/goalie.png" class="img-thumbnail" />
+            }
+            else
+            {
+                <img src="~/Images/player.jpg" class="img-thumbnail" />
+            }
+        </div>
+        <div class="col-md-8">
+            <div class="col-md-8">First Name: @player.FirstName</div>
+            <div class="col-md-8">Last Name: @player.LastName</div>
+            <div class="col-md-8">Position: @player.Position</div>
+            @if (this.User.IsInRole("Admin") || this.User.IsInRole("Manager"))
+                {
+                <div class="col-md-8">Last Name: @player.LastName</div>
+            }
+        </div>
+    </div>
+}
+
