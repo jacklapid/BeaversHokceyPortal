@@ -69,6 +69,12 @@
             @Html.DropDownListFor(m => m.ManagerId, Model.AvailableManagers, new { @class = "form-control" })
         </div>
     </div>
+    <div class="form-group player-only" style="display:none">
+        @Html.LabelFor(m => m.TeamId, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(m => m.TeamId, Model.AvailableTeams, new { @class = "form-control" })
+        </div>
+    </div>
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
@@ -91,7 +97,6 @@
             var $list = $(optionList);
 
             var isPlayer = $list.find("option:selected").text() == 'Player';
-
             if (isPlayer) {
                 $('.player-only').show();
             }

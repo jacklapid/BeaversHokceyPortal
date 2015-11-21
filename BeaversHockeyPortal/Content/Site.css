@@ -22,3 +22,19 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+li.dropdown-submenu:hover ul {
+    display: block;
+    position: relative;
+    left: 0%;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+    .dropdown-submenu:hover .dropdown-menu {
+        position: absolute;
+        top: 10;
+    }

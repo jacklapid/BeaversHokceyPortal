@@ -114,9 +114,13 @@ namespace BeaversHockeyPortal.Models
         [Display(Name = "Manager")]
         public string ManagerId { get; set; }
 
+        [Display(Name = "Team")]
+        public int TeamId { get; set; }
+
         public List<SelectListItem> AvailableManagers { get; set; }
 
         public List<SelectListItem> AvailableRoles{ get; set; }
+        public List<SelectListItem> AvailableTeams { get; set; }
     }
 
     public class ResetPasswordViewModel

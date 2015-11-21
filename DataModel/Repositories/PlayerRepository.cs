@@ -21,10 +21,16 @@ namespace DataModel.Repositories
             return _ctx.Persons.OfType<Manager>();
         }
 
+        public Manager GetManagerById(string managerId)
+        {
+            return _ctx.Persons.OfType<Manager>().FirstOrDefault(m => m.Id == managerId);
+        }
+
         public IQueryable<Player> GetPlayersForManager(string managerId)
         {
+
             return _ctx.Persons.OfType<Player>()
-                               .Where(p => p.ManagerId == managerId);
+                               .Where(p => p.Manager.Id == managerId);
         }
 
         public IQueryable<IdentityRole> GetRoles()
@@ -35,6 +41,11 @@ namespace DataModel.Repositories
         public Person GetPersonById(string userId)
         {
             return this._ctx.Persons.FirstOrDefault(person => person.Id == userId);
+        }
+
+        public Team GeTeamById(int teamId)
+        {
+            return _ctx.Teams.FirstOrDefault(t => t.Id == teamId);
         }
     }
 }

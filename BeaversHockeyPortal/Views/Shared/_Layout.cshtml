@@ -17,7 +17,17 @@
                     <li>                        @Html.ActionLink("Players", "Players", "Player")                    </li>
                     @if (this.User.IsInRole(Utilities.Constants.MANAGER_ROLE))
                     {
-                        <li>@Html.ActionLink("Manager Portal", "Index", "Manager")</li>
+                        <li class="dropdown-submenu">
+                            <a tabindex="-1" href="#">Manager Portal ...</a>
+
+                            <ul class="dropdown-menu">
+                                <li >
+                                    @Html.ActionLink("Team", "", "")
+                                    @Html.ActionLink("Games", "", "")
+                                    @Html.ActionLink("Settings", "", "")
+                                </li>
+                            </ul>
+                        </li>
                     }
                 </ul>
                 @Html.Partial("_LoginPartial")
@@ -35,5 +45,6 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+
 </body>
 </html>

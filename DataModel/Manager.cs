@@ -15,7 +15,9 @@ namespace DataModel
 
         public Manager()
         {
-            this.UserTypeId = (int)DataModel.Enums.UserTypeEnum.Manager;
+            this.UserType_Id = (int)DataModel.Enums.UserTypeEnum.Manager;
+            Teams = new List<Team>();
+            Players = new List<Player>();
         }
         public ICollection<Player> Players { get; set; }
     }

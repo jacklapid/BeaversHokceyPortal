@@ -13,7 +13,7 @@ namespace DataModel
     {
         //public int Id { get; set; }
         [Required]
-        public int UserTypeId { get; set; }
+        public int UserType_Id { get; set; }
         [Required]
         public string FirstName { get; set; }
         [Required]

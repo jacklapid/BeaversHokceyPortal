@@ -68,7 +68,7 @@ namespace DataModel
                 }
             }
 
-            adminUser.UserTypeId = (int)Enums.UserTypeEnum.Admin;
+            adminUser.UserType_Id = (int)Enums.UserTypeEnum.Admin;
 
             context.Teams.Add(new Team { Name = "Beavers" });
 

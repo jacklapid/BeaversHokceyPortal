@@ -171,6 +171,15 @@ namespace BeaversHockeyPortal.Controllers
                     Value = m.Id
                 })
                 .ToList();
+
+                model.AvailableTeams = allManagers.ToList()
+                    .SelectMany(m => m.Teams)
+                    .Select(t => new SelectListItem
+                    {
+                        Text = t.Name,
+                        Value = t.Id.ToString()
+                    })
+.ToList();
             }
             else if (this.User.IsInRole(Utilities.Constants.MANAGER_ROLE))
             {
@@ -182,6 +191,13 @@ namespace BeaversHockeyPortal.Controllers
                     {
                         new SelectListItem {Text = loggedManager.FullName, Value = loggedManager.Id, Selected = true }
                     };
+
+                    model.AvailableTeams = loggedManager.Teams.Select(t => new SelectListItem
+                    {
+                        Text = t.Name,
+                        Value = t.Id.ToString()
+                    })
+    .ToList();
                 }
             }
         }
@@ -202,18 +218,34 @@ namespace BeaversHockeyPortal.Controllers
                 switch (roleName)
                 {
                     case Utilities.Constants.PLAYER_ROLE:
-                        user = new Player
+                       
+                        var manager = _repo.GetManagerById(model.ManagerId);
+                        if (manager == null)
                         {
-                            PlayerPositionId = (int)model.Position,
-                            PlayerStatusId = (int)model.Status,
-                            ManagerId = model.ManagerId
-                        };
+                            AddErrors("Player must be attached to a manager");
+                        }
+                        else
+                        {
+                            user = new Player
+                            {
+                                PlayerPosition_Id = (int)model.Position,
+                                PlayerStatus_Id = (int)model.Status,
+                                Manager = manager,
+                                Team = _repo.GeTeamById(model.TeamId)
+                            };
+                        }
                         break;
                     case Utilities.Constants.MANAGER_ROLE:
                         user = new Manager
                         {
 
                         };
+
+                        var team = _repo.GeTeamById(model.TeamId);
+                        if (team != null)
+                        {
+                            (user as Manager).Teams.Add(team);
+                        }
                         break;
                     default:
                         AddErrors($"Cannot create user for Role {model.RoleId}");

@@ -12,14 +12,14 @@ namespace DataModel
     {
         public Player()
         {
-            this.UserTypeId = (int)DataModel.Enums.UserTypeEnum.Player;
+            this.UserType_Id = (int)DataModel.Enums.UserTypeEnum.Player;
         }
         [Required]
-        public int PlayerStatusId { get; set; }
+        public int PlayerStatus_Id { get; set; }
 
-        public int PlayerPositionId { get; set; }
+        public int PlayerPosition_Id { get; set; }
         [Required]
-        public string ManagerId { get; set; }
+        public Manager Manager { get; set; }
         public Team Team{ get; set; }
     }
 }

@@ -34,7 +34,7 @@ namespace BeaversHockeyPortal.Controllers
                 return View(new List<PlayerViewModels>());
             }
 
-            switch (person.UserTypeId)
+            switch (person.UserType_Id)
             {
                 case (int)UserTypeEnum.Admin:
                     managerIds = _playerRepository.GetManagers().Select(m => m.Id);
@@ -44,7 +44,7 @@ namespace BeaversHockeyPortal.Controllers
                     break;
                 case (int)UserTypeEnum.Player:
                     var player = person as Player;
-                    managerIds = new List<string> { player.ManagerId };
+                    managerIds = new List<string> { player.Manager.Id };
                     break;
                 default:
                     throw new Exception($"Unable to view player for current user: {person.FullName}");
@@ -53,13 +53,13 @@ namespace BeaversHockeyPortal.Controllers
 
             var players = managerIds.ToList()
                 .SelectMany(managerId => _playerRepository.GetPlayersForManager(managerId))
-                    .OrderBy(p => p.PlayerStatusId == (int)PlayerStatusEnum.Regular)
+                    .OrderBy(p => p.PlayerStatus_Id == (int)PlayerStatusEnum.Regular)
                     .Select(p => new PlayerViewModels
                     {
                         FirstName = p.FirstName,
                         LastName = p.LastName,
-                        Position = Enum.GetName(typeof(DataModel.Enums.PlayerPositionEnum), p.PlayerPositionId),
-                        PositionId = p.PlayerPositionId
+                        Position = Enum.GetName(typeof(DataModel.Enums.PlayerPositionEnum), p.PlayerPosition_Id),
+                        PositionId = p.PlayerPosition_Id
                     })
                     .ToList();
 

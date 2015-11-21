@@ -12,9 +12,13 @@ namespace DataModel.Repositories
         IQueryable<Player> GetPlayersForManager(string managerId);
 
         IQueryable<Manager> GetManagers();
+        Manager GetManagerById(string managerId);
 
         IQueryable<IdentityRole> GetRoles();
 
         Person GetPersonById(string userId);
+
+        Team GeTeamById(int teamId);
+
     }
 }
