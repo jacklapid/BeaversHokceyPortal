@@ -20,12 +20,12 @@ namespace BeaversHockeyPortal.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public AccountController(DataModel.Repositories.IPlayerRepository repo)
+        public AccountController(DataModel.Repositories.IRepository repo)
         {
             _repo = repo;
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, DataModel.Repositories.IPlayerRepository repo)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, DataModel.Repositories.IRepository repo)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -152,54 +152,31 @@ namespace BeaversHockeyPortal.Controllers
 
         private void PopulateOptions(RegisterViewModel model)
         {
+            var userId = this.User.Identity.GetUserId();
+
             model.AvailableRoles = _repo.GetRoles().ToList()
-    .Select(r => new SelectListItem
-    {
-        Text = r.Name,
-        Value = r.Id
-    })
-    .ToList();
+                    .Select(r => new SelectListItem
+                    {
+                        Text = r.Name,
+                        Value = r.Id
+                    })
+                    .ToList();
 
-
-            if (this.User.IsInRole(Utilities.Constants.ADMIN_ROLE))
-            {
-                var allManagers = _repo.GetManagers();
-
-                model.AvailableManagers = allManagers.ToList().Select(m => new SelectListItem
+            model.AvailableManagers = ControllerHelper.GetManagersInScope(userId, this._repo)
+                .Select(m => new SelectListItem
                 {
                     Text = m.FullName,
                     Value = m.Id
                 })
                 .ToList();
 
-                model.AvailableTeams = allManagers.ToList()
-                    .SelectMany(m => m.Teams)
-                    .Select(t => new SelectListItem
-                    {
-                        Text = t.Name,
-                        Value = t.Id.ToString()
-                    })
-.ToList();
-            }
-            else if (this.User.IsInRole(Utilities.Constants.MANAGER_ROLE))
-            {
-                var userID = this.User.Identity.GetUserId();
-                var loggedManager = _repo.GetManagers().FirstOrDefault(m => m.Id == userID);
-                if (loggedManager != null)
+            model.AvailableTeams = ControllerHelper.GetTeamsInScope(userId, this._repo)
+                .Select(t => new SelectListItem
                 {
-                    model.AvailableManagers = new System.Collections.Generic.List<SelectListItem>
-                    {
-                        new SelectListItem {Text = loggedManager.FullName, Value = loggedManager.Id, Selected = true }
-                    };
-
-                    model.AvailableTeams = loggedManager.Teams.Select(t => new SelectListItem
-                    {
-                        Text = t.Name,
-                        Value = t.Id.ToString()
-                    })
-    .ToList();
-                }
-            }
+                    Text = t.Name,
+                    Value = t.Id.ToString()
+                })
+                .ToList();
         }
 
 
@@ -218,7 +195,7 @@ namespace BeaversHockeyPortal.Controllers
                 switch (roleName)
                 {
                     case Utilities.Constants.PLAYER_ROLE:
-                       
+
                         var manager = _repo.GetManagerById(model.ManagerId);
                         if (manager == null)
                         {
@@ -231,7 +208,7 @@ namespace BeaversHockeyPortal.Controllers
                                 PlayerPosition_Id = (int)model.Position,
                                 PlayerStatus_Id = (int)model.Status,
                                 Manager = manager,
-                                Team = _repo.GeTeamById(model.TeamId)
+                                Team = _repo.GetTeamById(model.TeamId)
                             };
                         }
                         break;
@@ -240,12 +217,6 @@ namespace BeaversHockeyPortal.Controllers
                         {
 
                         };
-
-                        var team = _repo.GeTeamById(model.TeamId);
-                        if (team != null)
-                        {
-                            (user as Manager).Teams.Add(team);
-                        }
                         break;
                     default:
                         AddErrors($"Cannot create user for Role {model.RoleId}");
@@ -543,7 +514,7 @@ namespace BeaversHockeyPortal.Controllers
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
-        private IPlayerRepository _repo;
+        private IRepository _repo;
 
         private IAuthenticationManager AuthenticationManager
         {

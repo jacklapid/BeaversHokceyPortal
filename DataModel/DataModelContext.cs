@@ -24,6 +24,8 @@ namespace DataModel
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Game>().HasOptional(e => e.Arena).WithMany();
+
             //modelBuilder.Entity<Person>()
             //    .HasMany(p => p.Roles)
             //    .WithMany()
@@ -35,6 +37,7 @@ namespace DataModel
         }
 
         public DbSet<Person> Persons { get; set; }
+
         public DbSet<PlayerStatus> PlayerStatuses { get; set; }
 
         public DbSet<PlayerPosition> PlayerPositions { get; set; }
@@ -42,11 +45,16 @@ namespace DataModel
         public DbSet<UserType> UserTypes { get; set; }
 
         public DbSet<FileAttachment> FileAttachments { get; set; }
+
         public DbSet<Arena> Arenas { get; set; }
+
         public DbSet<Team> Teams { get; set; }
+
         public DbSet<GameStatistic> GameStatistics { get; set; }
+
         public DbSet<Game> Games { get; set; }
 
+        public DbSet<Note> Notes { get; set; }
 
         //public DbSet<Role> Roles{ get; set; }
     }

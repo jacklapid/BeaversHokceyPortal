@@ -1,0 +1,14 @@
+﻿@model BeaversHockeyPortal.Models.GameViewModel
+
+@{
+    ViewBag.Title = "Games";
+}
+
+<div class="form-group">
+    @Html.Partial("CreateGame", Model.GameCreateViewModel)
+</div>
+
+<div class="list-group">
+    @Html.Partial("ListGames", Model.GameListViewModel)
+</div>
+

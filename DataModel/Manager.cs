@@ -10,15 +10,15 @@ namespace DataModel
     [Table("Managers")]
     public class Manager : Person
     {
-        [Required]
-        public ICollection<Team> Teams { get; set; }
+        //[Required]
+        //public ICollection<Team> Teams { get; set; }
 
         public Manager()
         {
             this.UserType_Id = (int)DataModel.Enums.UserTypeEnum.Manager;
-            Teams = new List<Team>();
-            Players = new List<Player>();
+            //Teams = new List<Team>();
+            //Players = new List<Player>();
         }
-        public ICollection<Player> Players { get; set; }
+        ////public ICollection<Player> Players { get; set; }
     }
 }

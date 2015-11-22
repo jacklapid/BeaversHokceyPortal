@@ -68,11 +68,9 @@ namespace DataModel
                 }
             }
 
+            context.Arenas.Add(new Arena { Name = "Concordia", Address = "123 Sherbrooke" });
+
             adminUser.UserType_Id = (int)Enums.UserTypeEnum.Admin;
-
-            context.Teams.Add(new Team { Name = "Beavers" });
-
-            context.Arenas.Add(new Arena { Name = "Concordia" });
 
             context.SaveChanges();
         }

@@ -14,9 +14,9 @@ namespace BeaversHockeyPortal.Controllers
     [Authorize]
     public class PlayerController : Controller
     {
-        private IPlayerRepository _playerRepository;
+        private IRepository _playerRepository;
 
-        public PlayerController(IPlayerRepository playerRepository)
+        public PlayerController(IRepository playerRepository)
         {
             _playerRepository = playerRepository;
         }
