@@ -4,6 +4,9 @@
 }
 
 <h2>Players</h2>
+
+
+
 @foreach (var player in Model)
 {
     <div class="row">
@@ -22,10 +25,8 @@
             <div class="col-md-8">First Name: @player.FirstName</div>
             <div class="col-md-8">Last Name: @player.LastName</div>
             <div class="col-md-8">Position: @player.Position</div>
-            @if (this.User.IsInRole("Admin") || this.User.IsInRole("Manager"))
-                {
-                <div class="col-md-8">Last Name: @player.LastName</div>
-            }
+            <div class="col-md-8">Manager: @player.Manageer</div>
+            <div class="col-md-8">Team: @player.Team</div>
         </div>
     </div>
 }

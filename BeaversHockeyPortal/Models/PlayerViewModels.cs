@@ -21,7 +21,12 @@ namespace BeaversHockeyPortal.Models
         public string ImageUrl { get; set; }
 
         public string Position { get; set; }
+
         public int PositionId { get; set; }
+
+        public string Team { get; set; }
+
+        public string Manageer{ get; set; }
 
 
         //public string Password { get; set; }

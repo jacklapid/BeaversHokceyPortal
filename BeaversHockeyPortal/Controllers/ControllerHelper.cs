@@ -24,6 +24,10 @@ namespace BeaversHockeyPortal.Controllers
                 {
                     managers.Add(repo.GetManagerById(userId));
                 }
+                else if (person.UserType_Id == (int)DataModel.Enums.UserTypeEnum.Player)
+                {
+                    managers.Add((person as Player).Manager);
+                }
             }
 
             return managers;
@@ -47,6 +51,17 @@ namespace BeaversHockeyPortal.Controllers
             return managers
                 .SelectMany(m => repo.GetGamesForManager(m.Id))
                 .Where(g => g != null)
+                .Distinct()
+                .ToList();
+        }
+
+        public static IEnumerable<Player> GetPlayersInScope(string userId, IRepository repo)
+        {
+            var managers = GetManagersInScope(userId, repo);
+
+            return managers
+                .SelectMany(m => repo.GetPlayersForManager(m.Id))
+                .Where(p => p != null)
                 .Distinct()
                 .ToList();
         }

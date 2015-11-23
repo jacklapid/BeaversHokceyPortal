@@ -98,7 +98,11 @@ public class GameListViewModel
 
         public List<NoteViewModel> GameNotes { get; set; }
 
+        [Display(Name = "Manager")]
         public string Manager{ get; set; }
+
+        [Display(Name = "Already Confirmed")]
+        public string IsConfirmed{ get; set; }
 
     }
 }

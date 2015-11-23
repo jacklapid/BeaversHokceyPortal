@@ -42,5 +42,10 @@ namespace DataModel.Repositories
 
         Person GetPersonById(string userId);
 
+        string GetSettingValueByKey(string key);
+
+        bool ConfirmGame(int gameId, string userId);
+
+        bool UnconfirmGame(int gameId, string userId);
     }
 }

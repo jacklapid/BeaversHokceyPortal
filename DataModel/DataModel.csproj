@@ -78,6 +78,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\Repository.cs" />
     <Compile Include="Person.cs" />
+    <Compile Include="Season.cs" />
+    <Compile Include="Setting.cs" />
     <Compile Include="Team.cs" />
     <Compile Include="UserType.cs" />
   </ItemGroup>

@@ -72,6 +72,17 @@ namespace DataModel
 
             adminUser.UserType_Id = (int)Enums.UserTypeEnum.Admin;
 
+            context.Seasons.Add(new Season
+            {
+                Name = "2015 - 2016",
+                StartDate = new DateTime(2015, 09, 01),
+                EndDate = new DateTime(2016, 05, 01)
+            });
+
+            context.Settings.Add(new Setting { Key = Utilities.SettingKeys.DAYS_BEFORE_OPENNING_CONFIRMATIONS, Value = "7" });
+            context.Settings.Add(new Setting { Key = Utilities.SettingKeys.DAYS_BEFORE_SENDING_REGULARS_EMAIL, Value = "5" });
+            context.Settings.Add(new Setting { Key = Utilities.SettingKeys.DAYS_BEFORE_SENDING_SPARES_EMAIL, Value = "3" });
+
             context.SaveChanges();
         }
     }

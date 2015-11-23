@@ -56,7 +56,9 @@ namespace DataModel
 
         public DbSet<Note> Notes { get; set; }
 
-        //public DbSet<Role> Roles{ get; set; }
+        public DbSet<Season> Seasons{ get; set; }
+
+        public DbSet<Setting> Settings{ get; set; }
     }
 
 }

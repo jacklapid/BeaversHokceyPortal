@@ -18,8 +18,9 @@ namespace DataModel
         public int PlayerStatus_Id { get; set; }
 
         public int PlayerPosition_Id { get; set; }
+
         [Required]
-        public Manager Manager { get; set; }
+        public Manager Manager    { get; set; }
         public Team Team{ get; set; }
     }
 }

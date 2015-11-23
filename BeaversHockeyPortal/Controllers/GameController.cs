@@ -53,7 +53,8 @@ namespace BeaversHockeyPortal.Controllers
                     }).ToList(),
                     GameStatistics = g.GameStatistics.Select(s => s.Description).ToList(),
                     Manager = g.Manager != null ? g.Manager.FullName : string.Empty
-                });
+                })
+                .OrderByDescending(g => g.Date);
 
             return games;
         }
@@ -117,6 +118,7 @@ namespace BeaversHockeyPortal.Controllers
             var userId = this.User.Identity.GetUserId();
 
             model.AvailableManagers = ControllerHelper.GetManagersInScope(userId, this._repo)
+                .OrderBy(x => x.FullName)
     .Select(m => new SelectListItem
     {
         Text = m.FullName,
@@ -125,6 +127,7 @@ namespace BeaversHockeyPortal.Controllers
     .ToList();
 
             model.AllAvailableTeams = this._repo.GetTeams()
+                .OrderBy(x => x.Name)
                     .Select(x => new SelectListItem
                     {
                         Text = x.Name,
@@ -133,6 +136,7 @@ namespace BeaversHockeyPortal.Controllers
     .ToList();
 
             model.AvailableArenas = this._repo.GetArenas()
+                .OrderBy(x => x.Name)
                     .Select(x => new SelectListItem
                     {
                         Text = x.Name,
@@ -141,6 +145,7 @@ namespace BeaversHockeyPortal.Controllers
     .ToList();
 
             model.AvailableTeamsOwnedByManager = ControllerHelper.GetTeamsInScope(userId, this._repo)
+                .OrderBy(x => x.Name)
                                     .Select(x => new SelectListItem
                                     {
                                         Text = x.Name,
