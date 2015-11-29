@@ -27,17 +27,24 @@ namespace DataModel
                 return;
             }
 
-            var adminUser = new Person
+            var adminUser = new ApplicationUser
             {
                 UserName = Utilities.Constants.ADMIN_EMAIL,
                 Email = Utilities.Constants.ADMIN_EMAIL,
+            };
+
+            var adminPerson = new Person
+            {
+                ApplicationUser_Id = adminUser.Id,
                 FirstName = "Jack",
                 LastName = "Lapid",
             };
 
+            context.Persons.Add(adminPerson);
+
             var userStore = new UserStore<ApplicationUser>(context);
             var userManager = new UserManager<ApplicationUser>(userStore);
-            userManager.Create(adminUser, "Abc_123");
+            userManager.Create(adminUser, "Qwe_123");
 
             foreach (var kvp in EnumHelper.ToDictionary(typeof(Enums.PlayerStatusEnum)))
             {
@@ -70,7 +77,7 @@ namespace DataModel
 
             context.Arenas.Add(new Arena { Name = "Concordia", Address = "123 Sherbrooke" });
 
-            adminUser.UserType_Id = (int)Enums.UserTypeEnum.Admin;
+            adminPerson.UserType_Id = (int)Enums.UserTypeEnum.Admin;
 
             context.Seasons.Add(new Season
             {

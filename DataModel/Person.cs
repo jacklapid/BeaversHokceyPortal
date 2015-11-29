@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 namespace DataModel
 {
     [Table("Persons")]
-    public class Person : ApplicationUser
+    public class Person
     {
-        //public int Id { get; set; }
+        public int Id { get; set; }
+
         [Required]
         public int UserType_Id { get; set; }
         [Required]
@@ -26,7 +27,7 @@ namespace DataModel
 
         //public string Password { get; set; }
 
-        //public string ApplicationUserId { get; set; }
+        public string ApplicationUser_Id { get; set; }
 
         public string FullName
         {

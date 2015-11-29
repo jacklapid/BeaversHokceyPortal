@@ -219,6 +219,8 @@
     <Content Include="Images\player.jpg" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <None Include="Properties\PublishProfiles\BeaversHockeyPortal - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\BeaversHockeyPortal - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -272,7 +274,7 @@
     <Content Include="Views\Game\Games.cshtml" />
     <Content Include="Views\Game\ListGames.cshtml" />
     <Content Include="Views\Game\CreateGame.cshtml" />
-    <Content Include="Views\Player\PlayerConfirmGame.cshtml" />
+    <Content Include="Views\Player\ConfirmGames.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

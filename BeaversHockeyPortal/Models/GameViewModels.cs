@@ -23,6 +23,7 @@ namespace BeaversHockeyPortal.Models
             this.AvailableArenas = new List<SelectListItem>();
             this.AvailableTeamsOwnedByManager = new List<SelectListItem>();
             this.AvailableManagers = new List<SelectListItem>();
+            this.AvailableSeasons = new List<SelectListItem>();
         }
 
         [Required]
@@ -47,7 +48,10 @@ namespace BeaversHockeyPortal.Models
         public int ThemId { get; set; }
 
         [Display(Name = "Manager")]
-        public string ManagerId { get; set; }
+        public int ManagerId { get; set; }
+
+        [Display(Name = "Season")]
+        public int SeasonId { get; set; }
 
         public List<SelectListItem> AllAvailableTeams { get; set; }
 
@@ -56,6 +60,8 @@ namespace BeaversHockeyPortal.Models
         public List<SelectListItem> AvailableArenas { get; set; }
 
         public List<SelectListItem> AvailableManagers { get; set; }
+
+        public List<SelectListItem> AvailableSeasons { get; set; }
     }
 
 public class GameListViewModel
@@ -101,8 +107,25 @@ public class GameListViewModel
         [Display(Name = "Manager")]
         public string Manager{ get; set; }
 
-        [Display(Name = "Already Confirmed")]
-        public string IsConfirmed{ get; set; }
+        [Display(Name = "Season")]
+        public string Season { get; set; }
 
+        [Display(Name = "Confirmed Status")]
+        public string IsConfirmedString
+        {
+            get
+            {
+                if (this.IsConfirmed.HasValue)
+                {
+                    return this.IsConfirmed.Value ? "Confirmed" : "Not Confirmed";
+                }
+                else
+                {
+                    return "Not Applicable";
+                }
+            }
+        }
+
+        public bool? IsConfirmed { get; set; }
     }
 }

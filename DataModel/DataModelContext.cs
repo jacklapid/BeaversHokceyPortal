@@ -24,7 +24,8 @@ namespace DataModel
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<Game>().HasOptional(e => e.Arena).WithMany();
+            //modelBuilder.Entity<Game>().HasOptional(e => e.Arena).WithMany();
+            //modelBuilder.Entity<Player>().HasOptional(e => e.Manager).WithMany();
 
             //modelBuilder.Entity<Person>()
             //    .HasMany(p => p.Roles)
@@ -59,6 +60,8 @@ namespace DataModel
         public DbSet<Season> Seasons{ get; set; }
 
         public DbSet<Setting> Settings{ get; set; }
+
+        public DbSet<GameConfirmation> GameConfirmations { get; set; }
     }
 
 }

@@ -23,7 +23,11 @@ namespace BeaversHockeyPortal.Controllers
         {
             var model = new Models.GameViewModel
             {
-                GameCreateViewModel = new Models.GameCreateViewModel(),
+                GameCreateViewModel = new Models.GameCreateViewModel
+                {
+                    Date = DateTime.Now.Date,
+                    Time = DateTime.Now
+                },
                 GameListViewModel = GetGames()
             };
 
@@ -52,7 +56,8 @@ namespace BeaversHockeyPortal.Controllers
                         Text = n.NoteDescription
                     }).ToList(),
                     GameStatistics = g.GameStatistics.Select(s => s.Description).ToList(),
-                    Manager = g.Manager != null ? g.Manager.FullName : string.Empty
+                    Manager = g.Manager != null ? g.Manager.FullName : string.Empty,
+                    Season = g.Season != null ? g.Season.Name : string.Empty
                 })
                 .OrderByDescending(g => g.Date);
 
@@ -86,11 +91,12 @@ namespace BeaversHockeyPortal.Controllers
                 else
                 {
                     var successfullyCreated = _repo.CreateGame(
-                        _repo.GetArenaById(model.ArenaId),
+                        model.ArenaId,
                         new DateTime(model.Date.Year, model.Date.Month, model.Date.Day, model.Time.Hour, model.Time.Minute, 0),
                         manager,
-                        _repo.GetTeamById(model.UsId),
-                        _repo.GetTeamById(model.ThemId));
+                        model.UsId,
+                        model.ThemId,
+                        model.SeasonId);
 
                     if (successfullyCreated)
                     {
@@ -122,7 +128,7 @@ namespace BeaversHockeyPortal.Controllers
     .Select(m => new SelectListItem
     {
         Text = m.FullName,
-        Value = m.Id
+        Value = m.Id.ToString()
     })
     .ToList();
 
@@ -146,6 +152,15 @@ namespace BeaversHockeyPortal.Controllers
 
             model.AvailableTeamsOwnedByManager = ControllerHelper.GetTeamsInScope(userId, this._repo)
                 .OrderBy(x => x.Name)
+                                    .Select(x => new SelectListItem
+                                    {
+                                        Text = x.Name,
+                                        Value = x.Id.ToString()
+                                    })
+    .ToList();
+
+            model.AvailableSeasons = _repo.GetSeasons()
+                                .OrderBy(x => x.StartDate)
                                     .Select(x => new SelectListItem
                                     {
                                         Text = x.Name,

@@ -50,7 +50,7 @@ namespace BeaversHockeyPortal.Controllers
     .Select(m => new SelectListItem
     {
         Text = m.FullName,
-        Value = m.Id
+        Value = m.Id.ToString()
     })
     .ToList();
         }

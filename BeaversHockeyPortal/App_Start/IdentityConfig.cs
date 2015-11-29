@@ -59,7 +59,7 @@ namespace BeaversHockeyPortal
                 RequireDigit = false,
                 RequireLowercase = false,
                 RequireUppercase = false,
-            };
+            }; 
 
             // Configure user lockout defaults
             manager.UserLockoutEnabledByDefault = true;

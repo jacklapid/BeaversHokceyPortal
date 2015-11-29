@@ -26,52 +26,46 @@ namespace BeaversHockeyPortal.Controllers
             return View(GetGamesOpenForConfirmation());
         }
 
-        public ActionResult ConfirmGame(int gameId = 0)
+        public ActionResult ConfirmGame(int id = 0, bool confirming = false)
         {
-            var game = _repo.GetGameById(gameId);
+            var game = _repo.GetGameById(id);
             if (game == null)
             {
                 return HttpNotFound();
             }
 
             var userId = this.User.Identity.GetUserId();
-            var player = _repo.GetPersonById(userId) as Player;
+            var player = _repo.GetPersonByUserId(userId) as Player;
 
-            if (game.ConfirmedPlayers.Any(p => p.Id == userId))
+            if (player == null)
             {
-                ModelState.AddModelError("", $"Player '{player.FullName}' already registered for this game");
+                ModelState.AddModelError("", $"Only a player can confirm the game");
             }
             else
             {
-                game.ConfirmedPlayers.Add(player);
+                var isGameConfirmed = _repo.GetPlayerGameConfirmationStatus(player.Id, id);
+
+                if (confirming && isGameConfirmed)
+                {
+                    ModelState.AddModelError("", $"Error Confirming: Player '{player.FullName}' already confirmed this game");
+                }
+                else if (!confirming && !isGameConfirmed)
+                {
+                    ModelState.AddModelError("", $"Error Unconfirming: Player '{player.FullName}' not registered for this game");
+                }
+                else
+                {
+                    if (confirming)
+                    {
+                        _repo.ConfirmGame(id, player.Id);
+                    }
+                    else
+                    {
+                        _repo.UnconfirmGame(id, player.Id);
+                    }
+                    return RedirectToAction("ConfirmGames", "Player");
+                }
             }
-
-            _repo.ConfirmGame(gameId, userId);
-
-            return View(GetGamesOpenForConfirmation());
-        }
-
-        public ActionResult UnConfirmGame(int gameId = 0)
-        {
-            var game = _repo.GetGameById(gameId);
-            if (game == null)
-            {
-                return HttpNotFound();
-            }
-
-            var userId = this.User.Identity.GetUserId();
-            var player = _repo.GetPersonById(userId) as Player;
-
-            if (game.ConfirmedPlayers.All(p => p.Id != userId))
-            {
-                ModelState.AddModelError("", $"Player '{player.FullName}' is not registered for this game. Cannot UNCONFIRM!");
-            }
-            else
-            {
-                game.ConfirmedPlayers.Remove(player);
-            }
-
-            _repo.UnconfirmGame(gameId, userId);
 
             return View(GetGamesOpenForConfirmation());
         }
@@ -79,13 +73,25 @@ namespace BeaversHockeyPortal.Controllers
 
         private IEnumerable<GameListViewModel> GetGamesOpenForConfirmation()
         {
-            var daysBeforeCanConfirm = int.Parse(_repo.GetSettingValueByKey(Utilities.SettingKeys.DAYS_BEFORE_OPENNING_CONFIRMATIONS));
-            var dateWhenConfirmationIsOpen = DateTime.Now.Date.AddDays(-daysBeforeCanConfirm);
-
             var userId = this.User.Identity.GetUserId();
+            var person = _repo.GetPersonByUserId(userId);
 
-            var games = ControllerHelper.GetGamesInScope(userId, _repo)
-                .Where(g => g.Date.Date >= dateWhenConfirmationIsOpen)
+            var isPlayer = person.UserType_Id == (int)DataModel.Enums.UserTypeEnum.Player;
+
+            var games = ControllerHelper.GetGamesInScope(userId, _repo);
+
+            Dictionary<int, bool> playerGameConfirmationStatuses = new Dictionary<int, bool>();
+
+            if (isPlayer)
+            {
+                var daysBeforeCanConfirm = int.Parse(_repo.GetSettingValueByKey(Utilities.SettingKeys.DAYS_BEFORE_OPENNING_CONFIRMATIONS));
+                var dateWhenConfirmationIsOpen = DateTime.Now.Date.AddDays(daysBeforeCanConfirm);
+                games = games.Where(g => g.Date.Date <= dateWhenConfirmationIsOpen);
+
+                playerGameConfirmationStatuses = _repo.GetPlayerGameConfirmationStatuses(person.Id, games.Select(g => g.Id));
+            }
+
+            var gamesVM = games
                 .OrderByDescending(g => g.Date)
                 .Select(g => new GameListViewModel
                 {
@@ -94,10 +100,11 @@ namespace BeaversHockeyPortal.Controllers
                     Time = g.Date,
                     Arena = g.Arena != null ? g.Arena.Name : string.Empty,
                     Manager = g.Manager.FullName,
-                    IsConfirmed = g.ConfirmedPlayers.Any(p => p.Id == userId) ? "YES" : "NO"
+                    IsConfirmed = isPlayer ? playerGameConfirmationStatuses[g.Id] : (bool?)null,
+                    TheirTeam = g.Them != null ? g.Them.Name : string.Empty,
                 });
 
-            return games;
+            return gamesVM;
         }
 
         // GET: Player

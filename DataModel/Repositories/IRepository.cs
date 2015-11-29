@@ -9,16 +9,18 @@ namespace DataModel.Repositories
 {
     public interface IRepository
     {
-        IQueryable<Player> GetPlayersForManager(string managerId);
+        IQueryable<Player> GetPlayersForManager(int managerId);
 
         IQueryable<Manager> GetManagers();
 
-        Manager GetManagerById(string managerId);
+        Manager GetManagerById(int managerId);
+
+        Manager GetManagerByUserId(string userId);
 
 
         Team GetTeamById(int teamId);
 
-        IQueryable<Team> GetTeamsForManager(string managerId);
+        IQueryable<Team> GetTeamsForManager(int managerId);
 
         IQueryable<Team> GetTeams();
 
@@ -29,9 +31,9 @@ namespace DataModel.Repositories
 
         IQueryable<Game> GetGames();
 
-        IQueryable<Game> GetGamesForManager(string managerId);
+        IQueryable<Game> GetGamesForManager(int managerId);
 
-        bool CreateGame(Arena arena, DateTime date, Manager manager, Team us, Team them);
+        bool CreateGame(int arenaId, DateTime date, Manager manager, int usId, int themId, int seasonId);
 
 
         IQueryable<Arena> GetArenas();
@@ -40,12 +42,22 @@ namespace DataModel.Repositories
 
         IQueryable<IdentityRole> GetRoles();
 
-        Person GetPersonById(string userId);
+        Person GetPersonByUserId(string userId);
+
+        Player GetPlayerByUserId(string userId);
 
         string GetSettingValueByKey(string key);
 
-        bool ConfirmGame(int gameId, string userId);
+        bool ConfirmGame(int gameId, int playerId);
 
-        bool UnconfirmGame(int gameId, string userId);
+        bool UnconfirmGame(int gameId, int playerId);
+
+        bool SavePerson(Person person);
+
+        IQueryable<Season> GetSeasons();
+
+        Dictionary<int, bool> GetPlayerGameConfirmationStatuses(int playerId, IEnumerable<int> gameIds);
+
+        bool GetPlayerGameConfirmationStatus(int playerId, int gameId);
     }
 }

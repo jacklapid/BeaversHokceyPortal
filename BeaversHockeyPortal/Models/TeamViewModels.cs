@@ -39,7 +39,7 @@ namespace BeaversHockeyPortal.Models
         [Display(Name = "Team Name")]
         public string Name { get; set; }
 
-        public string ManagerId { get; set; }
+        public int ManagerId { get; set; }
 
         public List<SelectListItem> AvailableManagers { get; set; }
 

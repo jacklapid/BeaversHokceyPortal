@@ -154,7 +154,7 @@ namespace BeaversHockeyPortal.Controllers
         {
             var userId = this.User.Identity.GetUserId();
 
-            model.AvailableRoles = _repo.GetRoles().ToList()
+            model.AvailableRoles = ControllerHelper.GetRolesInScope(userId, this._repo)
                     .Select(r => new SelectListItem
                     {
                         Text = r.Name,
@@ -166,7 +166,7 @@ namespace BeaversHockeyPortal.Controllers
                 .Select(m => new SelectListItem
                 {
                     Text = m.FullName,
-                    Value = m.Id
+                    Value = m.Id.ToString()
                 })
                 .ToList();
 
@@ -189,16 +189,20 @@ namespace BeaversHockeyPortal.Controllers
         {
             if (ModelState.IsValid)
             {
-                ApplicationUser user = new ApplicationUser
+                var user = new ApplicationUser
                 {
                     UserName = model.Email,
                     Email = model.Email,
                 };
 
+                user.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityUserRole
+                {
+                    RoleId = model.RoleId,
+                    UserId = user.Id
+                });
+
                 try
                 {
-
-
                     var result = await UserManager.CreateAsync(user, model.Password);
                     if (result.Succeeded)
                     {
@@ -209,8 +213,6 @@ namespace BeaversHockeyPortal.Controllers
                         // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                         // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                         // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                        return RedirectToAction("Register", "Account");
                     }
                     AddErrors(result);
                 }
@@ -219,24 +221,9 @@ namespace BeaversHockeyPortal.Controllers
                     var newException = new FormattedDbEntityValidationException(e);
                     throw newException;
                 }
-            }
-            // If we got this far, something failed, redisplay form
-            this.PopulateOptions(model);
-            return View(model);
 
-
-
-        }
-
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register2(RegisterViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                ApplicationUser user = null;
                 var roleName = _repo.GetRoles().First(r => r.Id == model.RoleId).Name;
+                Person person = null;
 
                 switch (roleName)
                 {
@@ -249,17 +236,17 @@ namespace BeaversHockeyPortal.Controllers
                         }
                         else
                         {
-                            user = new Player
+                            person = new Player
                             {
                                 PlayerPosition_Id = (int)model.Position,
                                 PlayerStatus_Id = (int)model.Status,
                                 Manager = manager,
-                                Team = _repo.GetTeamById(model.TeamId)
+                                Team = _repo.GetTeamById(model.TeamId),
                             };
                         }
                         break;
                     case Utilities.Constants.MANAGER_ROLE:
-                        user = new Manager
+                        person = new Manager
                         {
 
                         };
@@ -269,51 +256,110 @@ namespace BeaversHockeyPortal.Controllers
                         break;
                 }
 
-                if (user != null)
+                person.ApplicationUser_Id = user.Id;
+                person.FirstName = model.FirstName;
+                person.LastName = model.LastName;
+
+                var success = _repo.SavePerson(person);
+
+                if (success)
                 {
-                    var person = user as Person;
-                    person.FirstName = model.FirstName;
-                    person.LastName = model.LastName;
-
-                    user.UserName = model.Email;
-                    user.Email = model.Email;
-
-                    user.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityUserRole
-                    {
-                        RoleId = model.RoleId,
-                        UserId = user.Id
-                    });
-                    try
-                    {
-
-
-                        var result = await UserManager.CreateAsync(user, model.Password);
-                        if (result.Succeeded)
-                        {
-                            //await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-
-                            // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                            // Send an email with this link
-                            // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                            // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                            // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                            return RedirectToAction("Register", "Account");
-                        }
-                        AddErrors(result);
-                    }
-                    catch (System.Data.Entity.Validation.DbEntityValidationException e)
-                    {
-                        var newException = new FormattedDbEntityValidationException(e);
-                        throw newException;
-                    }
+                    return RedirectToAction("Register", "Account");
                 }
             }
+
 
             // If we got this far, something failed, redisplay form
             this.PopulateOptions(model);
             return View(model);
         }
+
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> Register2(RegisterViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        ApplicationUser user = null;
+        //        var roleName = _repo.GetRoles().First(r => r.Id == model.RoleId).Name;
+
+        //        switch (roleName)
+        //        {
+        //            case Utilities.Constants.PLAYER_ROLE:
+
+        //                var manager = _repo.GetManagerById(model.ManagerId);
+        //                if (manager == null)
+        //                {
+        //                    AddErrors("Player must be attached to a manager");
+        //                }
+        //                else
+        //                {
+        //                    user = new Player
+        //                    {
+        //                        PlayerPosition_Id = (int)model.Position,
+        //                        PlayerStatus_Id = (int)model.Status,
+        //                        Manager = manager,
+        //                        Team = _repo.GetTeamById(model.TeamId)
+        //                    };
+        //                }
+        //                break;
+        //            case Utilities.Constants.MANAGER_ROLE:
+        //                user = new Manager
+        //                {
+
+        //                };
+        //                break;
+        //            default:
+        //                AddErrors($"Cannot create user for Role {model.RoleId}");
+        //                break;
+        //        }
+
+        //        if (user != null)
+        //        {
+        //            var person = user as Person;
+        //            person.FirstName = model.FirstName;
+        //            person.LastName = model.LastName;
+
+        //            user.UserName = model.Email;
+        //            user.Email = model.Email;
+
+        //            user.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityUserRole
+        //            {
+        //                RoleId = model.RoleId,
+        //                UserId = user.Id
+        //            });
+        //            try
+        //            {
+
+
+        //                var result = await UserManager.CreateAsync(user, model.Password);
+        //                if (result.Succeeded)
+        //                {
+        //                    //await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+        //                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+        //                    // Send an email with this link
+        //                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+        //                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+        //                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+        //                    return RedirectToAction("Register", "Account");
+        //                }
+        //                AddErrors(result);
+        //            }
+        //            catch (System.Data.Entity.Validation.DbEntityValidationException e)
+        //            {
+        //                var newException = new FormattedDbEntityValidationException(e);
+        //                throw newException;
+        //            }
+        //        }
+        //    }
+
+        //    // If we got this far, something failed, redisplay form
+        //    this.PopulateOptions(model);
+        //    return View(model);
+        //}
 
         //
         // GET: /Account/ConfirmEmail

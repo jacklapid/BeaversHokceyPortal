@@ -13,7 +13,6 @@ namespace DataModel
         {
             this.GameNotes = new List<Note>();
             this.GameStatistics = new List<GameStatistic>();
-            this.ConfirmedPlayers = new List<Player>();
         }
         public int Id { get; set; }
 
@@ -38,7 +37,5 @@ namespace DataModel
         public Manager Manager { get; set; }
 
         public Season Season { get; set; }
-
-        public ICollection<Player> ConfirmedPlayers{ get; set; }
     }
 }

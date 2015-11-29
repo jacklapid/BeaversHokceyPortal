@@ -1,0 +1,69 @@
+﻿@model IEnumerable<BeaversHockeyPortal.Models.GameListViewModel>
+
+@{
+    ViewBag.Title = "Confirm Game";
+}
+
+<h2>Confirm Game</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Time)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Arena)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TheirTeam)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Manager)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsConfirmedString)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Arena)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TheirTeam)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Manager)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsConfirmedString)
+            </td>
+            @if (item.IsConfirmed.HasValue)
+            {
+                <td>
+                    @if (item.IsConfirmed.Value)
+                    {
+                        @Html.ActionLink("Unconfirm Game", "ConfirmGame", new { id = item.Id, confirming = false })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Confirm Game", "ConfirmGame", new { id = item.Id, confirming = true })
+                    }
+                </td>
+            }
+        </tr>
+    }
+
+</table>

@@ -1,6 +1,6 @@
 ﻿using DataModel;
 using DataModel.Repositories;
-
+using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,11 +8,29 @@ namespace BeaversHockeyPortal.Controllers
 {
     public static class ControllerHelper
     {
+        public static IEnumerable<IdentityRole> GetRolesInScope(string userId, IRepository repo)
+        {
+            var person = repo.GetPersonByUserId(userId);
+
+            if (person != null)
+            {
+                if (person.UserType_Id == (int)DataModel.Enums.UserTypeEnum.Admin)
+                {
+                    return repo.GetRoles().ToList();
+                }
+                else if (person.UserType_Id == (int)DataModel.Enums.UserTypeEnum.Manager)
+                {
+                    return repo.GetRoles().Where(r => r.Name == DataModel.Enums.UserTypeEnum.Player.ToString());
+                }
+            }
+
+            return new List<IdentityRole>();
+        }
         public static IEnumerable<Manager> GetManagersInScope(string userId, IRepository repo)
         {
             var managers = new List<Manager>();
 
-            var person = repo.GetPersonById(userId);
+            var person = repo.GetPersonByUserId(userId);
 
             if (person != null)
             {
@@ -22,11 +40,12 @@ namespace BeaversHockeyPortal.Controllers
                 }
                 else if (person.UserType_Id == (int)DataModel.Enums.UserTypeEnum.Manager)
                 {
-                    managers.Add(repo.GetManagerById(userId));
+                    managers.Add(repo.GetManagerByUserId(userId));
                 }
                 else if (person.UserType_Id == (int)DataModel.Enums.UserTypeEnum.Player)
                 {
-                    managers.Add((person as Player).Manager);
+                    var player = repo.GetPlayerByUserId(userId);
+                    managers.Add(player.Manager);
                 }
             }
 
