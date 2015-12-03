@@ -1,0 +1,57 @@
+﻿@model IEnumerable<BeaversHockeyPortal.Models.EmailEventViewModel>
+
+@{
+    ViewBag.Title = "Email Events";
+}
+
+<h2>Events</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.EventTypesString)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DaysBeforeGame)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReoccurrenceDays)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EmailTemplatesString)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ManagerName)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.EventTypesString)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DaysBeforeGame)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReoccurrenceDays)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EmailTemplatesString)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ManagerName)
+        </td>
+        <td>
+            @*@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
+        </td>
+    </tr>
+}
+
+</table>

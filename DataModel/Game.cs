@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,5 +38,14 @@ namespace DataModel
         public Manager Manager { get; set; }
 
         public Season Season { get; set; }
+
+        [NotMapped]
+        public  string Name
+        {
+            get
+            {
+                return this.Date.ToString();
+            }
+        }
     }
 }

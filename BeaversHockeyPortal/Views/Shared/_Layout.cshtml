@@ -39,6 +39,17 @@
                                 <li>
                                     @Html.ActionLink("Games", "Games", "Game")
                                 </li>
+                                <li class="dropdown-submenu">
+                                    <a tabindex="-1" href="#">Emails ...</a>
+                                    <ul class="dropdown-submenu">
+                                        <li>
+                                            @Html.ActionLink("Templates", "Templates", "Email")
+                                        </li>
+                                        <li>
+                                            @Html.ActionLink("Events", "Events", "EmailEvent")
+                                        </li>
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
                     }

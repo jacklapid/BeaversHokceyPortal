@@ -61,6 +61,10 @@
     <Compile Include="Arena.cs" />
     <Compile Include="DataModelContext.cs" />
     <Compile Include="DataModelMigrationConfiguration.cs" />
+    <Compile Include="EmailEvent.cs" />
+    <Compile Include="EmailEventType.cs" />
+    <Compile Include="EmailTemplate.cs" />
+    <Compile Include="Enums\EmailEventTypeEnum.cs" />
     <Compile Include="Enums\RoleEnum.cs" />
     <Compile Include="Enums\PlayerPositionEnum.cs" />
     <Compile Include="Enums\PlayerStatusEnum.cs" />
@@ -70,6 +74,7 @@
     <Compile Include="GameConfirmation.cs" />
     <Compile Include="GameStatistic.cs" />
     <Compile Include="IdentityModels.cs" />
+    <Compile Include="INamableEntity.cs" />
     <Compile Include="Note.cs" />
     <Compile Include="PlayerPosition.cs" />
     <Compile Include="PlayerStatus.cs" />

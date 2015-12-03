@@ -29,11 +29,21 @@ namespace DataModel
 
         public string ApplicationUser_Id { get; set; }
 
+        [NotMapped]
         public string FullName
         {
             get
             {
                 return $"{FirstName} {LastName}";
+            }
+        }
+
+        [NotMapped]
+        public string Name
+        {
+            get
+            {
+                return this.FullName;
             }
         }
     }

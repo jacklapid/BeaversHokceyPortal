@@ -26,6 +26,32 @@ namespace BeaversHockeyPortal.Controllers
 
             return new List<IdentityRole>();
         }
+        public static IEnumerable<Manager> GetManagersInScope(string userId, DataModelContext ctx)
+        {
+            var managers = new List<Manager>();
+
+            var person = ctx.Persons.FirstOrDefault(p => p.ApplicationUser_Id == userId);
+
+            if (person != null)
+            {
+                if (person.UserType_Id == (int)DataModel.Enums.UserTypeEnum.Admin)
+                {
+                    managers = ctx.Persons.OfType<Manager>().ToList();
+                }
+                else if (person.UserType_Id == (int)DataModel.Enums.UserTypeEnum.Manager)
+                {
+                    managers.Add(person as Manager);
+                }
+                else if (person.UserType_Id == (int)DataModel.Enums.UserTypeEnum.Player)
+                {
+                    var player = person as Player;
+                    managers.Add(player.Manager);
+                }
+            }
+
+            return managers;
+        }
+
         public static IEnumerable<Manager> GetManagersInScope(string userId, IRepository repo)
         {
             var managers = new List<Manager>();
@@ -51,6 +77,7 @@ namespace BeaversHockeyPortal.Controllers
 
             return managers;
         }
+
 
         public static IEnumerable<Team> GetTeamsInScope(string userId, IRepository repo)
         {
@@ -80,6 +107,41 @@ namespace BeaversHockeyPortal.Controllers
 
             return managers
                 .SelectMany(m => repo.GetPlayersForManager(m.Id))
+                .Where(p => p != null)
+                .Distinct()
+                .ToList();
+        }
+
+        public static IEnumerable<Person> GetUsersInScope(string userId, IRepository repo)
+        {
+            var managers = GetManagersInScope(userId, repo);
+
+            var persons = managers
+                .SelectMany(m => repo.GetPlayersForManager(m.Id))
+                .Where(p => p != null)
+                .Select(p => p as Person)
+                .ToList();
+
+            var person = repo.GetPersonByUserId(userId);
+            if (person.UserType_Id == (int)DataModel.Enums.UserTypeEnum.Admin || person.UserType_Id == (int)DataModel.Enums.UserTypeEnum.Manager)
+            {
+                persons.AddRange(managers.Cast<Person>());
+
+                if (person.UserType_Id == (int)DataModel.Enums.UserTypeEnum.Admin)
+                {
+                    persons.AddRange(repo.GetPersonsByUserType(DataModel.Enums.UserTypeEnum.Admin));
+                }
+            }
+
+            return persons.Distinct();
+        }
+
+        public static IEnumerable<EmailTemplate> GetEmailTemplatesInScope(string userId, IRepository repo)
+        {
+            var managers = GetManagersInScope(userId, repo);
+
+            return managers
+                .SelectMany(m => repo.GetEmailTemplatesForManager(m.Id))
                 .Where(p => p != null)
                 .Distinct()
                 .ToList();

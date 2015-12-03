@@ -13,6 +13,8 @@ namespace DataModel.Repositories
 
         IQueryable<Manager> GetManagers();
 
+        IQueryable<Person> GetPersonsByUserType(Enums.UserTypeEnum userType);
+
         Manager GetManagerById(int managerId);
 
         Manager GetManagerByUserId(string userId);
@@ -21,7 +23,7 @@ namespace DataModel.Repositories
         Team GetTeamById(int teamId);
 
         IQueryable<Team> GetTeamsForManager(int managerId);
-
+        
         IQueryable<Team> GetTeams();
 
         bool CreateTeam(string teamName, int? fileAttachmentId, Manager manager);
@@ -57,7 +59,11 @@ namespace DataModel.Repositories
         IQueryable<Season> GetSeasons();
 
         Dictionary<int, bool> GetPlayerGameConfirmationStatuses(int playerId, IEnumerable<int> gameIds);
-
+        bool CreateEmailTemplate(int[] toUserIds, int[] toPlayerStatusIds, int[] toUserTypeIds, string from, string subject, string body, int managerId);
         bool GetPlayerGameConfirmationStatus(int playerId, int gameId);
+
+        IQueryable<EmailTemplate> GetEmailTemplatesForManager(int managerId);
+
+        
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,5 +15,14 @@ namespace DataModel
 
         public DateTime TimeStamp{ get; set; }
         public Person Creator { get; set; }
+
+        [NotMapped]
+        public string Name
+        {
+            get
+            {
+                return this.NoteDescription;
+            }
+        }
     }
 }

@@ -13,7 +13,7 @@ namespace DataModel
         public DataModelContext() : base("DefaultConnection")
         {
             this.Configuration.LazyLoadingEnabled = false;
-            this.Configuration.ProxyCreationEnabled= false;
+            this.Configuration.ProxyCreationEnabled = false;
 
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<DataModelContext, DataModelMigrationConfiguration>());
         }
@@ -24,17 +24,55 @@ namespace DataModel
         {
             base.OnModelCreating(modelBuilder);
 
-            //modelBuilder.Entity<Game>().HasOptional(e => e.Arena).WithMany();
-            //modelBuilder.Entity<Player>().HasOptional(e => e.Manager).WithMany();
+            modelBuilder.Entity<EmailEvent>()
+                .HasMany(et => et.EmailTemplates)
+                .WithMany()
+                .Map(m =>
+                {
+                    m.ToTable("EmailEventEmailTemplate");
+                    m.MapLeftKey("EmailEvent_Id");
+                    m.MapRightKey("EmailTemplate_Id");
+                });
 
-            //modelBuilder.Entity<Person>()
-            //    .HasMany(p => p.Roles)
-            //    .WithMany()
-            //    .Map(m => {
-            //        m.ToTable("PersonRoles");
-            //        m.MapLeftKey("PersonId");
-            //        m.MapRightKey("RoleId");
-            //    });
+            modelBuilder.Entity<EmailEvent>()
+    .HasMany(et => et.EmailEventTypes)
+    .WithMany()
+    .Map(m =>
+    {
+        m.ToTable("EmailEventEmailEventType");
+        m.MapLeftKey("EmailEvent_Id");
+        m.MapRightKey("EmailEventType_Id");
+    });
+
+            modelBuilder.Entity<EmailTemplate>()
+                .HasMany(et => et.ToPersons)
+                .WithMany()
+                .Map(m =>
+                {
+                    m.ToTable("EmailTemplateToPerson");
+                    m.MapLeftKey("EmailTemplate_Id");
+                    m.MapRightKey("ToPerson_Id");
+                });
+
+            modelBuilder.Entity<EmailTemplate>()
+    .HasMany(et => et.ToPlayerStatuses)
+    .WithMany()
+    .Map(m =>
+    {
+        m.ToTable("EmailTemplateToPlayerStatus");
+        m.MapLeftKey("EmailTemplate_Id");
+        m.MapRightKey("ToPlayerStatus_Id");
+    });
+
+            modelBuilder.Entity<EmailTemplate>()
+.HasMany(et => et.ToUserTypes)
+.WithMany()
+.Map(m =>
+{
+    m.ToTable("EmailTemplateToUserType");
+    m.MapLeftKey("EmailTemplate_Id");
+    m.MapRightKey("ToUserType_Id");
+});
         }
 
         public DbSet<Person> Persons { get; set; }
@@ -57,11 +95,16 @@ namespace DataModel
 
         public DbSet<Note> Notes { get; set; }
 
-        public DbSet<Season> Seasons{ get; set; }
+        public DbSet<Season> Seasons { get; set; }
 
-        public DbSet<Setting> Settings{ get; set; }
+        public DbSet<Setting> Settings { get; set; }
 
         public DbSet<GameConfirmation> GameConfirmations { get; set; }
-    }
 
+        public DbSet<EmailTemplate> EmailTemplates { get; set; }
+
+        public DbSet<EmailEvent> EmailEvents { get; set; }
+
+        public DbSet<EmailEventType> EmailEventTypes { get; set; }
+    }
 }

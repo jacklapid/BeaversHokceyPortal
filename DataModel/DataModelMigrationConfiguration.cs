@@ -40,28 +40,50 @@ namespace DataModel
                 LastName = "Lapid",
             };
 
+            var managerUser = new ApplicationUser
+            {
+                UserName = "manager@yahoo.ca",
+                Email = "manager@yahoo.ca",
+            };
+
+            var managerPerson = new Manager
+            {
+                ApplicationUser_Id = managerUser.Id,
+                FirstName = "Jesse",
+                LastName = "Manager",
+            };
+
             context.Persons.Add(adminPerson);
+
+            context.Persons.Add(managerPerson);
 
             var userStore = new UserStore<ApplicationUser>(context);
             var userManager = new UserManager<ApplicationUser>(userStore);
             userManager.Create(adminUser, "Qwe_123");
 
-            foreach (var kvp in EnumHelper.ToDictionary(typeof(Enums.PlayerStatusEnum)))
+            userManager.Create(managerUser, "q");
+
+            foreach (var kvp in EnumHelper<Enums.PlayerStatusEnum>.ToDictionary())
             {
                 context.PlayerStatuses.Add(new PlayerStatus { Id = kvp.Key, Name = kvp.Value });
             }
 
-            foreach (var kvp in EnumHelper.ToDictionary(typeof(Enums.PlayerPositionEnum)))
+            foreach (var kvp in EnumHelper<Enums.PlayerPositionEnum>.ToDictionary())
             {
                 context.PlayerPositions.Add(new PlayerPosition { Id = kvp.Key, Name = kvp.Value });
             }
 
-            foreach (var kvp in EnumHelper.ToDictionary(typeof(Enums.UserTypeEnum)))
+            foreach (var kvp in EnumHelper<Enums.UserTypeEnum>.ToDictionary())
             {
                 context.UserTypes.Add(new UserType { Id = kvp.Key, Name = kvp.Value });
             }
 
-            foreach (var kvp in EnumHelper.ToDictionary(typeof(Enums.RoleEnum)))
+            foreach (var kvp in EnumHelper<Enums.EmailEventTypeEnum>.ToDictionary())
+            {
+                context.EmailEventTypes.Add(new EmailEventType { Id = kvp.Key, Name = kvp.Value });
+            }
+
+            foreach (var kvp in EnumHelper<Enums.RoleEnum>.ToDictionary())
             {
                 var role = context.Roles.Add(new IdentityRole { Name = kvp.Value });
 
@@ -78,6 +100,7 @@ namespace DataModel
             context.Arenas.Add(new Arena { Name = "Concordia", Address = "123 Sherbrooke" });
 
             adminPerson.UserType_Id = (int)Enums.UserTypeEnum.Admin;
+            managerPerson.UserType_Id = (int)Enums.UserTypeEnum.Manager;
 
             context.Seasons.Add(new Season
             {

@@ -22,6 +22,11 @@ namespace DataModel.Repositories
             return _ctx.Persons.OfType<Manager>();
         }
 
+        public IQueryable<Person> GetPersonsByUserType(Enums.UserTypeEnum userType)
+        {
+            return _ctx.Persons.Where(p => p.UserType_Id == (int)userType);
+        }
+
         public Manager GetManagerById(int managerId)
         {
             return _ctx.Persons.OfType<Manager>().FirstOrDefault(m => m.Id == managerId);
@@ -223,6 +228,31 @@ namespace DataModel.Repositories
         public bool GetPlayerGameConfirmationStatus(int playerId, int gameId)
         {
             return _ctx.GameConfirmations.Any(gc => gc.Player_Id == playerId && gc.Game_Id == gameId);
+        }
+
+        public IQueryable<EmailTemplate> GetEmailTemplatesForManager(int managerId)
+        {
+            return _ctx.EmailTemplates.Where(et => et.Manager.Id == managerId);
+        }
+
+        public bool CreateEmailTemplate(int[] toUserIds, int[] toPlayerStatusIds, int[] toUserTypeIds, string from, string subject, string body, int managerId)
+        {
+            var emailTemplate = new EmailTemplate
+            {
+                ToPersons = toUserIds != null ? _ctx.Persons.Where(p => toUserIds.Contains(p.Id)).ToList() : new List<Person>(),
+                ToPlayerStatuses = toPlayerStatusIds != null ? _ctx.PlayerStatuses.Where(ps => toPlayerStatusIds.Contains(ps.Id)).ToList() : new List<PlayerStatus>(),
+                ToUserTypes = toUserTypeIds != null ? _ctx.UserTypes.Where(ut => toUserTypeIds.Contains(ut.Id)).ToList() : new List<UserType>(),
+                From = from,
+                Subject = subject,
+                Body = body,
+                Manager = this.GetManagerById(managerId)
+            };
+
+            _ctx.EmailTemplates.Add(emailTemplate);
+
+            _ctx.SaveChanges();
+
+            return true;
         }
     }
 }
