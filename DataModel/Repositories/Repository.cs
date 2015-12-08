@@ -254,5 +254,29 @@ namespace DataModel.Repositories
 
             return true;
         }
+
+        public PlayerRegistration GetPlayerToRegisterByToken(string token)
+        {
+            return _ctx.PlayerRegistrations.Include(p => p.Manager).Include(p => p.Team).FirstOrDefault(x => x.Token == token);
+        }
+
+        public bool CreatePlayerRegistration(string email, int managerId, int teamId)
+        {
+            var newPlayerRegistration = new PlayerRegistration
+            {
+                PlayerEmail = email,
+                Token = Guid.NewGuid().ToString(),
+                TokenAlreadyUsed = false,
+                TokenGeneratedOn = DateTime.Now,
+                Manager = this.GetManagerById(managerId),
+                Team = this.GetTeamById(teamId)
+            };
+
+            _ctx.PlayerRegistrations.Add(newPlayerRegistration);
+
+            _ctx.SaveChanges();
+
+            return true;
+        }
     }
 }

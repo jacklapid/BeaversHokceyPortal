@@ -35,6 +35,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -285,6 +286,7 @@
     <Content Include="Views\Email\Create.cshtml" />
     <Content Include="Views\EmailEvent\Events.cshtml" />
     <Content Include="Views\EmailEvent\Create.cshtml" />
+    <Content Include="Views\Player\CreatePlayerRegistration.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -304,6 +306,10 @@
     <ProjectReference Include="..\DataModel\DataModel.csproj">
       <Project>{a78df158-9f46-40ea-97aa-7d54636d7810}</Project>
       <Name>DataModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EmailModule\EmailModule.csproj">
+      <Project>{1320b7af-dc6c-432b-b6a8-dc48f606ccf4}</Project>
+      <Name>EmailModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{fe1f0108-8bbb-4a95-a1fe-9e5c328caacc}</Project>

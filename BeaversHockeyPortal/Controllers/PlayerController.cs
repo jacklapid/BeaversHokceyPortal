@@ -8,17 +8,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using BeaversHockeyPortal.WebUtilities;
+using Utilities;
+using EmailModule;
 
 namespace BeaversHockeyPortal.Controllers
 {
     [Authorize]
-    public class PlayerController : Controller
+    public class PlayerController : AuthorizedController
     {
-        private IRepository _repo;
 
-        public PlayerController(IRepository playerRepository)
+        public PlayerController(IRepository playerRepository) : base(playerRepository)
         {
-            _repo = playerRepository;
         }
 
         public ActionResult ConfirmGames()
@@ -28,14 +29,14 @@ namespace BeaversHockeyPortal.Controllers
 
         public ActionResult ConfirmGame(int id = 0, bool confirming = false)
         {
-            var game = _repo.GetGameById(id);
+            var game = this._Repo.GetGameById(id);
             if (game == null)
             {
                 return HttpNotFound();
             }
 
             var userId = this.User.Identity.GetUserId();
-            var player = _repo.GetPersonByUserId(userId) as Player;
+            var player = this._Repo.GetPersonByUserId(userId) as Player;
 
             if (player == null)
             {
@@ -43,7 +44,7 @@ namespace BeaversHockeyPortal.Controllers
             }
             else
             {
-                var isGameConfirmed = _repo.GetPlayerGameConfirmationStatus(player.Id, id);
+                var isGameConfirmed = this._Repo.GetPlayerGameConfirmationStatus(player.Id, id);
 
                 if (confirming && isGameConfirmed)
                 {
@@ -57,11 +58,11 @@ namespace BeaversHockeyPortal.Controllers
                 {
                     if (confirming)
                     {
-                        _repo.ConfirmGame(id, player.Id);
+                        this._Repo.ConfirmGame(id, player.Id);
                     }
                     else
                     {
-                        _repo.UnconfirmGame(id, player.Id);
+                        this._Repo.UnconfirmGame(id, player.Id);
                     }
                     return RedirectToAction("ConfirmGames", "Player");
                 }
@@ -74,21 +75,21 @@ namespace BeaversHockeyPortal.Controllers
         private IEnumerable<GameListViewModel> GetGamesOpenForConfirmation()
         {
             var userId = this.User.Identity.GetUserId();
-            var person = _repo.GetPersonByUserId(userId);
+            var person = this._Repo.GetPersonByUserId(userId);
 
             var isPlayer = person.UserType_Id == (int)DataModel.Enums.UserTypeEnum.Player;
 
-            var games = ControllerHelper.GetGamesInScope(userId, _repo);
+            var games = ControllerHelper.GetGamesInScope(userId, this._Repo);
 
             Dictionary<int, bool> playerGameConfirmationStatuses = new Dictionary<int, bool>();
 
             if (isPlayer)
             {
-                var daysBeforeCanConfirm = int.Parse(_repo.GetSettingValueByKey(Utilities.SettingKeys.DAYS_BEFORE_OPENNING_CONFIRMATIONS));
+                var daysBeforeCanConfirm = int.Parse(this._Repo.GetSettingValueByKey(Utilities.SettingKeys.DAYS_BEFORE_OPENNING_CONFIRMATIONS));
                 var dateWhenConfirmationIsOpen = DateTime.Now.Date.AddDays(daysBeforeCanConfirm);
                 games = games.Where(g => g.Date.Date <= dateWhenConfirmationIsOpen);
 
-                playerGameConfirmationStatuses = _repo.GetPlayerGameConfirmationStatuses(person.Id, games.Select(g => g.Id));
+                playerGameConfirmationStatuses = this._Repo.GetPlayerGameConfirmationStatuses(person.Id, games.Select(g => g.Id));
             }
 
             var gamesVM = games
@@ -112,7 +113,7 @@ namespace BeaversHockeyPortal.Controllers
         {
             var userID = User.Identity.GetUserId();
 
-            var players = ControllerHelper.GetPlayersInScope(userID, _repo).ToList()
+            var players = ControllerHelper.GetPlayersInScope(userID, this._Repo).ToList()
         .OrderBy(p => p.PlayerStatus_Id == (int)PlayerStatusEnum.Regular)
                 .ThenBy(p => p.FullName)
         .Select(p => new PlayerViewModels
@@ -130,9 +131,58 @@ namespace BeaversHockeyPortal.Controllers
         }
 
         [Authorize(Roles = "Manager, Admin")]
-        public ActionResult CreatePlayer()
+        public ActionResult CreatePlayerRegistration()
         {
-            return View();
+            var model = new PlayerRegistrationViewModel();
+
+            this.PopulateOptions(model);
+
+            return View(model);
+        }
+
+        [Authorize(Roles = "Manager, Admin")]
+        [HttpPost]
+        public ActionResult CreatePlayerRegistration(PlayerRegistrationViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var success = this._Repo.CreatePlayerRegistration(
+                    model.Email,
+                    model.ManagerId,
+                    model.TeamId
+                    );
+
+                if (success)
+                {
+                    var emailSender = new EmailSender();
+                    success = emailSender.SendEmail();
+                    if (success)
+                    {
+                        ViewData["Message"] = "Successfully Created Player Registration. An Email has been sent to the Player";
+                    }
+                    else
+                    {
+                        ViewData["Message"] = $"Successfully Created Player Registration. However sending email to the player failed (email: '{model.Email}'). Contact admin.";
+                    }
+
+                    ModelState.Clear();
+                    model = new PlayerRegistrationViewModel();
+                    this.PopulateOptions(model);
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Failed creating new Player Registration");
+                }
+            }
+
+            return View(model);
+        }
+
+        private void PopulateOptions(PlayerRegistrationViewModel model)
+        {
+            model.AvailableManagers = ControllerHelper.GetManagersInScope(this.UserId, this._Repo).ToSelectListItems();
+
+            model.AvailableTeams = ControllerHelper.GetTeamsInScope(this.UserId, this._Repo).ToSelectListItems();
         }
     }
 }

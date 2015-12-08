@@ -43,7 +43,7 @@
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.RoleId, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
+        <div class="col-md-10 jack">
             @Html.DropDownListFor(m => m.RoleId, Model.AvailableRoles,
            new { @class = "form-control role-selector", onchange = "onRoleChanged(this);" })
         </div>
@@ -88,7 +88,7 @@
     <script type="text/JavaScript">
 
         $(document).ready(function () {
-            var optionList = $('role-selector');
+            var optionList = $('.role-selector');
 
             onRoleChanged(optionList);
         });

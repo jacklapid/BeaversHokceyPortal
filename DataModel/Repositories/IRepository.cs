@@ -64,6 +64,7 @@ namespace DataModel.Repositories
 
         IQueryable<EmailTemplate> GetEmailTemplatesForManager(int managerId);
 
-        
+        PlayerRegistration GetPlayerToRegisterByToken(string token);
+        bool CreatePlayerRegistration(string email, int managerId, int teamId);
     }
 }

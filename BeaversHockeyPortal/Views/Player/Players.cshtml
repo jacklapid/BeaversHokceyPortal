@@ -5,7 +5,12 @@
 
 <h2>Players</h2>
 
-
+@if (this.User.IsInRole(Utilities.Constants.MANAGER_ROLE) || this.User.IsInRole(Utilities.Constants.ADMIN_ROLE))
+{
+    <p>
+        @Html.ActionLink("Create New Player Registration", "CreatePlayerRegistration")
+    </p>
+}
 
 @foreach (var player in Model)
 {

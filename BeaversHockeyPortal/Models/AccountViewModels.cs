@@ -63,6 +63,11 @@ namespace BeaversHockeyPortal.Models
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
     }
+    public class RegisterWithLinkViewModel
+    {
+        public RegisterViewModel RegisterViewModel { get; set; }
+        public string  token { get; set; }
+    }
 
     public class RegisterViewModel
     {
@@ -70,6 +75,7 @@ namespace BeaversHockeyPortal.Models
         {
             this.AvailableManagers = new List<SelectListItem>();
             AvailableRoles = new List<SelectListItem>();
+            this.AvailableTeams = new List<SelectListItem>();
         }
 
         [Required]
@@ -100,8 +106,7 @@ namespace BeaversHockeyPortal.Models
         [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
-        [Required]
-        [DataType(DataType.Text)]
+
         [Display(Name = "Role")]
         public string RoleId { get; set; }
 

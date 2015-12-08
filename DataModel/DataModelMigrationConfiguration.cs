@@ -112,6 +112,24 @@ namespace DataModel
             context.Settings.Add(new Setting { Key = Utilities.SettingKeys.DAYS_BEFORE_OPENNING_CONFIRMATIONS, Value = "7" });
             context.Settings.Add(new Setting { Key = Utilities.SettingKeys.DAYS_BEFORE_SENDING_REGULARS_EMAIL, Value = "5" });
             context.Settings.Add(new Setting { Key = Utilities.SettingKeys.DAYS_BEFORE_SENDING_SPARES_EMAIL, Value = "3" });
+            context.Settings.Add(new Setting { Key = Utilities.SettingKeys.DAYS_BEFORE_REGISTRATION_TOKEN_EXPIRES, Value = Utilities.Constants.REGISTRATION_TOKEN_EXPIRATION_DAYS.ToString() });
+
+            var beavers = new Team
+            {
+                Manager = managerPerson,
+                Name = "Beavers"
+            };
+            context.Teams.Add(beavers);
+
+            context.PlayerRegistrations.Add(new PlayerRegistration
+            {
+                PlayerEmail = "player@yahoo.ca",
+                Token = "12345",
+                TokenAlreadyUsed = false,
+                TokenGeneratedOn = DateTime.Now.AddDays(-10),
+                Manager = managerPerson,
+                Team = beavers
+            });
 
             context.SaveChanges();
         }

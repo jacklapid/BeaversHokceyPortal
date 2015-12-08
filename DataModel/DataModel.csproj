@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -76,6 +77,7 @@
     <Compile Include="IdentityModels.cs" />
     <Compile Include="INamableEntity.cs" />
     <Compile Include="Note.cs" />
+    <Compile Include="PlayerRegistration.cs" />
     <Compile Include="PlayerPosition.cs" />
     <Compile Include="PlayerStatus.cs" />
     <Compile Include="Repositories\IRepository.cs" />

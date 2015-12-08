@@ -139,19 +139,46 @@ namespace BeaversHockeyPortal.Controllers
             }
         }
 
-        //
-        // GET: /Account/Register
-        [AllowAnonymous]
-        public ActionResult Register()
+
+        private bool HasTokenExpired(PlayerRegistration personToRegister)
         {
-            var model = new RegisterViewModel();
+            var experiationDate = personToRegister.TokenGeneratedOn.AddDays(-Utilities.Constants.REGISTRATION_TOKEN_EXPIRATION_DAYS);
 
-            this.PopulateOptions(model);
-
-            return View(model);
+            return experiationDate > DateTime.Now;
         }
 
-        private void PopulateOptions(RegisterViewModel model)
+        private void PopulateOptionsForRegisteringPlayer(RegisterViewModel model, PlayerRegistration playerRegistration)
+        {
+            //ROles
+            model.AvailableRoles = _repo.GetRoles().Where(role => role.Name == DataModel.Enums.RoleEnum.Player.ToString()).
+                Select(r => new SelectListItem
+            {
+                Text = r.Name,
+                Value = r.Id,
+                Selected = true
+            })
+                    .ToList();
+
+            model.RoleId = _repo.GetRoles().FirstOrDefault(role => role.Name == DataModel.Enums.RoleEnum.Player.ToString()).Id;
+
+            //Manager
+            model.AvailableManagers.Add(new SelectListItem
+            {
+                Text = playerRegistration.Manager.FullName,
+                Value = playerRegistration.Manager.Id.ToString()
+            });
+            model.ManagerId = playerRegistration.Manager.Id;
+
+            //Team
+            model.AvailableTeams.Add(new SelectListItem
+            {
+                Text = playerRegistration.Team.Name,
+                Value = playerRegistration.Team.Id.ToString()
+            });
+            model.TeamId = playerRegistration.Team.Id;
+        }
+
+        private void PopulateOptionsForLoggedUser(RegisterViewModel model)
         {
             var userId = this.User.Identity.GetUserId();
 
@@ -180,9 +207,42 @@ namespace BeaversHockeyPortal.Controllers
                 .ToList();
         }
 
+        [AllowAnonymous]
+        public ActionResult Register(string token)
+        {
+            var model = new RegisterViewModel();
 
-        //
-        // POST: /Account/Register
+            if (this.User.Identity.IsAuthenticated)
+            {
+                this.PopulateOptionsForLoggedUser(model);
+            }
+            else
+            {
+                var playerToRegister = _repo.GetPlayerToRegisterByToken(token);
+
+                if (playerToRegister == null)
+                {
+                    ModelState.AddModelError("", "You may only register from a provided LINK with a valid token");
+                }
+                else if (HasTokenExpired(playerToRegister))
+                {
+                    ModelState.AddModelError("", "You may only register token has expired. Contact admin.");
+                }
+                else if (playerToRegister.TokenAlreadyUsed)
+                {
+                    ModelState.AddModelError("", "You cannot register with this token as it has already been used.");
+                }
+                else
+                {
+                    this.PopulateOptionsForRegisteringPlayer(model, playerToRegister);
+
+                    model.Email = playerToRegister.PlayerEmail;
+                }
+            }
+
+            return View(model);
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -271,7 +331,7 @@ namespace BeaversHockeyPortal.Controllers
 
 
             // If we got this far, something failed, redisplay form
-            this.PopulateOptions(model);
+            this.PopulateOptionsForLoggedUser(model);
             return View(model);
         }
 
