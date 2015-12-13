@@ -7,22 +7,28 @@
         @Html.AntiForgeryToken()
 
         <ul class="nav navbar-nav navbar-right">
-            <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+            @if (this.User.IsInRole(Utilities.Constants.ADMIN_ROLE) || this.User.IsInRole(Utilities.Constants.MANAGER_ROLE))
+            {
+                <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+            }
+
             <li>
                 @Html.ActionLink(this.User.Identity.Name, "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
             </li>
 
             <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+           @* <li><button onclick="return logoff()">Log off</button></li>*@
         </ul>
     }
 }
 else
 {
     <ul class="nav navbar-nav navbar-right">
-        @if (this.User.IsInRole(Utilities.Constants.ADMIN_ROLE))
-        {
-            <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
-        }
+
+        @* <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>*@
+
         <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
     </ul>
 }
+
+

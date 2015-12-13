@@ -10,26 +10,23 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BeaversHockeyPortal.Models;
 using DataModel;
-using DataModel.Repositories;
+using System.Transactions;
 
 namespace BeaversHockeyPortal.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : AuthorizedControllerWithDbContext
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
-        public AccountController(DataModel.Repositories.IRepository repo)
-        {
-            _repo = repo;
-        }
+        public AccountController(DataModel.Repositories.IRepository repo, DataModelContext dbContext) : base(repo, dbContext)
+        { }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, DataModel.Repositories.IRepository repo)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, DataModel.Repositories.IRepository repo, DataModelContext dbContext) : base(repo, dbContext)
         {
             UserManager = userManager;
             SignInManager = signInManager;
-            _repo = repo;
         }
 
         public ApplicationSignInManager SignInManager
@@ -59,10 +56,18 @@ namespace BeaversHockeyPortal.Controllers
         //
         // GET: /Account/Login
         [AllowAnonymous]
-        public ActionResult Login(string returnUrl)
+        public ActionResult Login(string returnUrl, string email)
         {
             ViewBag.ReturnUrl = returnUrl;
-            return View();
+
+            var model = new LoginViewModel();
+
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                model.Email = email;
+            }
+
+            return View(model);
         }
 
         //
@@ -150,16 +155,16 @@ namespace BeaversHockeyPortal.Controllers
         private void PopulateOptionsForRegisteringPlayer(RegisterViewModel model, PlayerRegistration playerRegistration)
         {
             //ROles
-            model.AvailableRoles = _repo.GetRoles().Where(role => role.Name == DataModel.Enums.RoleEnum.Player.ToString()).
+            model.AvailableRoles = this._Repo.GetRoles().Where(role => role.Name == DataModel.Enums.RoleEnum.Player.ToString()).
                 Select(r => new SelectListItem
-            {
-                Text = r.Name,
-                Value = r.Id,
-                Selected = true
-            })
+                {
+                    Text = r.Name,
+                    Value = r.Id,
+                    Selected = true
+                })
                     .ToList();
 
-            model.RoleId = _repo.GetRoles().FirstOrDefault(role => role.Name == DataModel.Enums.RoleEnum.Player.ToString()).Id;
+            model.RoleId = this._Repo.GetRoles().FirstOrDefault(role => role.Name == DataModel.Enums.RoleEnum.Player.ToString()).Id;
 
             //Manager
             model.AvailableManagers.Add(new SelectListItem
@@ -180,9 +185,9 @@ namespace BeaversHockeyPortal.Controllers
 
         private void PopulateOptionsForLoggedUser(RegisterViewModel model)
         {
-            var userId = this.User.Identity.GetUserId();
+            var userId = this.UserId;
 
-            model.AvailableRoles = ControllerHelper.GetRolesInScope(userId, this._repo)
+            model.AvailableRoles = ControllerHelper.GetRolesInScope(userId, this._Repo)
                     .Select(r => new SelectListItem
                     {
                         Text = r.Name,
@@ -190,7 +195,7 @@ namespace BeaversHockeyPortal.Controllers
                     })
                     .ToList();
 
-            model.AvailableManagers = ControllerHelper.GetManagersInScope(userId, this._repo)
+            model.AvailableManagers = ControllerHelper.GetManagersInScope(userId, this._Repo)
                 .Select(m => new SelectListItem
                 {
                     Text = m.FullName,
@@ -198,7 +203,7 @@ namespace BeaversHockeyPortal.Controllers
                 })
                 .ToList();
 
-            model.AvailableTeams = ControllerHelper.GetTeamsInScope(userId, this._repo)
+            model.AvailableTeams = ControllerHelper.GetTeamsInScope(userId, this._Repo)
                 .Select(t => new SelectListItem
                 {
                     Text = t.Name,
@@ -218,21 +223,11 @@ namespace BeaversHockeyPortal.Controllers
             }
             else
             {
-                var playerToRegister = _repo.GetPlayerToRegisterByToken(token);
 
-                if (playerToRegister == null)
-                {
-                    ModelState.AddModelError("", "You may only register from a provided LINK with a valid token");
-                }
-                else if (HasTokenExpired(playerToRegister))
-                {
-                    ModelState.AddModelError("", "You may only register token has expired. Contact admin.");
-                }
-                else if (playerToRegister.TokenAlreadyUsed)
-                {
-                    ModelState.AddModelError("", "You cannot register with this token as it has already been used.");
-                }
-                else
+                var playerToRegister = this._Repo.GetPlayerToRegisterByToken(token);
+                var isTokenValid = ValidateToken(playerToRegister);
+
+                if (isTokenValid)
                 {
                     this.PopulateOptionsForRegisteringPlayer(model, playerToRegister);
 
@@ -243,94 +238,162 @@ namespace BeaversHockeyPortal.Controllers
             return View(model);
         }
 
+        private bool ValidateToken(PlayerRegistration playerToRegister)
+        {
+            var isTokenValid = false;
+
+            if (playerToRegister == null)
+            {
+                ModelState.AddModelError("", "You may only register from a provided LINK with a valid token");
+            }
+            else if (HasTokenExpired(playerToRegister))
+            {
+                ModelState.AddModelError("", "You may only register token has expired. Contact admin.");
+            }
+            else if (playerToRegister.TokenAlreadyUsed)
+            {
+                ModelState.AddModelError("", "You cannot register with this token as it has already been used.");
+            }
+            else
+            {
+                isTokenValid = true;
+            }
+
+            return isTokenValid;
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(RegisterViewModel model, string token)
         {
-            if (ModelState.IsValid)
+            var canRegister = false;
+            var success = false;
+            PlayerRegistration playerToRegister = null;
+
+            if (this.User.Identity.IsAuthenticated)
             {
-                var user = new ApplicationUser
-                {
-                    UserName = model.Email,
-                    Email = model.Email,
-                };
+                canRegister = true;
+            }
+            else
+            {
+                playerToRegister = this._Repo.GetPlayerToRegisterByToken(token);
+                canRegister = ValidateToken(playerToRegister);
+            }
 
-                user.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityUserRole
+            if (ModelState.IsValid && canRegister)
+            {
+                using (TransactionScope transaction = new TransactionScope(System.Transactions.TransactionScopeAsyncFlowOption.Enabled))
                 {
-                    RoleId = model.RoleId,
-                    UserId = user.Id
-                });
-
-                try
-                {
-                    var result = await UserManager.CreateAsync(user, model.Password);
-                    if (result.Succeeded)
+                    try
                     {
-                        //await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
-
-                        // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                        // Send an email with this link
-                        // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                        // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                        // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                    }
-                    AddErrors(result);
-                }
-                catch (System.Data.Entity.Validation.DbEntityValidationException e)
-                {
-                    var newException = new FormattedDbEntityValidationException(e);
-                    throw newException;
-                }
-
-                var roleName = _repo.GetRoles().First(r => r.Id == model.RoleId).Name;
-                Person person = null;
-
-                switch (roleName)
-                {
-                    case Utilities.Constants.PLAYER_ROLE:
-
-                        var manager = _repo.GetManagerById(model.ManagerId);
-                        if (manager == null)
+                        var user = new ApplicationUser
                         {
-                            AddErrors("Player must be attached to a manager");
+                            UserName = model.Email,
+                            Email = model.Email,
+                        };
+
+                        // Create USER Account
+                        var result = await UserManager.CreateAsync(user, model.Password);
+                        success = result.Succeeded;
+
+                        if (result.Succeeded)
+                        {
+                            // Add role
+                            user.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityUserRole
+                            {
+                                RoleId = model.RoleId,
+                                UserId = user.Id
+                            });
+
+                            // Create PERSON
+                            var roleName = this._Repo.GetRoles().First(r => r.Id == model.RoleId).Name;
+                            Person person = null;
+
+                            #region Create Person
+                            switch (roleName)
+                            {
+                                case Utilities.Constants.PLAYER_ROLE:
+
+                                    var manager = this._Repo.GetManagerById(model.ManagerId);
+                                    if (manager == null)
+                                    {
+                                        AddErrors("Player must be attached to a manager");
+                                        success = false;
+                                    }
+                                    else
+                                    {
+                                        person = new Player
+                                        {
+                                            PlayerPosition_Id = (int)model.Position,
+                                            PlayerStatus_Id = (int)model.Status,
+                                            Manager = manager,
+                                            Team = this._Repo.GetTeamById(model.TeamId),
+                                        };
+                                    }
+                                    break;
+                                case Utilities.Constants.MANAGER_ROLE:
+                                    person = new Manager
+                                    {
+
+                                    };
+                                    break;
+                            }
+                            #endregion Create Person
+
+                            if (success)
+                            {
+                                person.ApplicationUser_Id = user.Id;
+                                person.FirstName = model.FirstName;
+                                person.LastName = model.LastName;
+
+                                success = this._Repo.SavePerson(person);
+                            }
+                        }
+                        else //await UserManager.CreateAsync
+                        {
+                            AddErrors(result);
+                        }
+
+                        if (success)
+                        {
+                            // Mark TOKEN as already used
+                            if (playerToRegister != null)
+                            {
+                                playerToRegister.TokenAlreadyUsed = true;
+
+                                this.DbContext.SaveChanges();
+                            }
+
+                            transaction.Complete();
                         }
                         else
                         {
-                            person = new Player
-                            {
-                                PlayerPosition_Id = (int)model.Position,
-                                PlayerStatus_Id = (int)model.Status,
-                                Manager = manager,
-                                Team = _repo.GetTeamById(model.TeamId),
-                            };
+                            transaction.Dispose();
                         }
-                        break;
-                    case Utilities.Constants.MANAGER_ROLE:
-                        person = new Manager
-                        {
+                    }
+                    catch (System.Data.Entity.Validation.DbEntityValidationException e)
+                    {
+                        transaction.Dispose();
 
-                        };
-                        break;
-                    default:
-                        AddErrors($"Cannot create user for Role {model.RoleId}");
-                        break;
-                }
-
-                person.ApplicationUser_Id = user.Id;
-                person.FirstName = model.FirstName;
-                person.LastName = model.LastName;
-
-                var success = _repo.SavePerson(person);
-
-                if (success)
-                {
-                    return RedirectToAction("Register", "Account");
+                        var newException = new FormattedDbEntityValidationException(e);
+                        throw newException;
+                    }
                 }
             }
 
+            if (success && playerToRegister != null)
+            {
+                return RedirectToAction("Login", "Account", new { email = playerToRegister.PlayerEmail });
+            }
 
-            // If we got this far, something failed, redisplay form
+            if (success)
+            {
+                ModelState.Clear();
+                model = new RegisterViewModel();
+                @ViewData["Message"] = $"Successully created user for Email: {model.Email}";
+            }
+
             this.PopulateOptionsForLoggedUser(model);
             return View(model);
         }
@@ -676,7 +739,6 @@ namespace BeaversHockeyPortal.Controllers
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
-        private IRepository _repo;
 
         private IAuthenticationManager AuthenticationManager
         {

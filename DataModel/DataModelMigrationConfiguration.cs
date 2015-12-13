@@ -61,7 +61,7 @@ namespace DataModel
             var userManager = new UserManager<ApplicationUser>(userStore);
             userManager.Create(adminUser, "Qwe_123");
 
-            userManager.Create(managerUser, "q");
+            userManager.Create(managerUser, "Qwe_123");
 
             foreach (var kvp in EnumHelper<Enums.PlayerStatusEnum>.ToDictionary())
             {
@@ -94,6 +94,15 @@ namespace DataModel
                         RoleId = role.Id,
                         UserId = adminUser.Id
                     });
+
+                    if (kvp.Key == (int)Enums.RoleEnum.Manager)
+                    {
+                        managerUser.Roles.Add(new IdentityUserRole
+                        {
+                            RoleId = role.Id,
+                            UserId = managerUser.Id
+                        });
+                    }
                 }
             }
 

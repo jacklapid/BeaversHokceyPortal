@@ -6,27 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using System.Web.Mvc;
+using DataModel;
 
 namespace BeaversHockeyPortal.Controllers
 {
-    [Authorize(Roles = Utilities.Constants.ADMIN_ROLE + ", " + Utilities.Constants.MANAGER_ROLE)]
-    public class AuthorizedController : Controller
+    public class AuthorizedControllerWithDbContext : AuthorizedController
     {
-        public IRepository _Repo { get; private set; }
+        public DataModelContext DbContext { get; private set; }
 
-
-
-        public AuthorizedController(IRepository repo)
+        public AuthorizedControllerWithDbContext(IRepository repo, DataModelContext ctx) : base(repo)
         {
-            this._Repo = repo;
-        }
-
-        public string UserId
-        {
-            get
-            {
-                return this.User.Identity.GetUserId();
-            }
+            this.DbContext = ctx;
         }
     }
 }

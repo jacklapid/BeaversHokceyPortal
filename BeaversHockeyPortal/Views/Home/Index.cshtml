@@ -17,3 +17,7 @@
         <h2>Portal</h2>
     </div>
 </div>
+@if (!this.User.Identity.IsAuthenticated)
+{
+    <h1 class="alert alert-danger">Please Log In to see more content</h1>
+}
