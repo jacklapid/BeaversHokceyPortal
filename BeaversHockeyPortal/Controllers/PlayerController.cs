@@ -11,6 +11,7 @@ using System.Web.Mvc;
 using BeaversHockeyPortal.WebUtilities;
 using Utilities;
 using EmailModule;
+using System.Transactions;
 
 namespace BeaversHockeyPortal.Controllers
 {
@@ -85,7 +86,7 @@ namespace BeaversHockeyPortal.Controllers
 
             if (isPlayer)
             {
-                var daysBeforeCanConfirm = int.Parse(this._Repo.GetSettingValueByKey(Utilities.SettingKeys.DAYS_BEFORE_OPENNING_CONFIRMATIONS));
+                var daysBeforeCanConfirm = WebSiteSettings.GetSettingValue<int>(SettingKeys.DAYS_BEFORE_OPENNING_CONFIRMATIONS);
                 var dateWhenConfirmationIsOpen = DateTime.Now.Date.AddDays(daysBeforeCanConfirm);
                 games = games.Where(g => g.Date.Date <= dateWhenConfirmationIsOpen);
 
@@ -146,24 +147,62 @@ namespace BeaversHockeyPortal.Controllers
         {
             if (ModelState.IsValid)
             {
-                var success = this._Repo.CreatePlayerRegistration(
+                var success = false;
+
+                using (TransactionScope transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+                {
+                    var token = this._Repo.CreatePlayerRegistration(
                     model.Email,
                     model.ManagerId,
                     model.TeamId
-                    ); 
+                    );
+
+                    success = !string.IsNullOrWhiteSpace(token);
+
+                    if (success)
+                    {
+                        #region SEND EMAIL
+                        var emailSender = new EmailSender();
+
+                        var link = $"{WebSiteSettings.GetSettingValue<string>(SettingKeys.PHYSICAL_SITE_ADDRESS)}/Account/Register/{token}";
+
+                        var body = "<html><head></head><body>" +
+                            "<p> Please follow this " +
+                            $"<a target=\"_blank\" href=\"{link}\">link</a>"+
+                            " to register for your <b>Beavers Hockey Portal</b></p>" + 
+                            "</body></html>";
+
+                        try
+                        {
+                            success = emailSender.SendEmail(
+                                        from: WebSiteSettings.GetSettingValue<string>(SettingKeys.FROM_EMAIL_ADDRESS),
+                                        to: model.Email,
+                                        subject: "Beavers Hockey Portal Registration",
+                                        body: body
+                                        );
+                        }
+                        catch (Exception)
+                        {
+                            transaction.Dispose();
+                            throw;
+                        }
+
+                        #endregion SEND EMAIL
+
+                        if (success)
+                        {
+                            transaction.Complete();
+                        }
+                        else
+                        {
+                            transaction.Dispose();
+                        }
+                    }
+                }
 
                 if (success)
                 {
-                    var emailSender = new EmailSender();
-                    success = emailSender.SendEmail();
-                    if (success)
-                    {
-                        ViewData["Message"] = "Successfully Created Player Registration. An Email has been sent to the Player";
-                    }
-                    else
-                    {
-                        ViewData["Message"] = $"Successfully Created Player Registration. However sending email to the player failed (email: '{model.Email}'). Contact admin.";
-                    }
+                    ViewData["Message"] = "Successfully Created Player Registration. An Email has been sent to the Player";
 
                     ModelState.Clear();
                     model = new PlayerRegistrationViewModel();

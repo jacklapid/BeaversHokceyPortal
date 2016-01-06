@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+﻿using DataModel.Language;
+using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -97,7 +98,7 @@ namespace DataModel
 
         public DbSet<Season> Seasons { get; set; }
 
-        public DbSet<Setting> Settings { get; set; }
+        //public DbSet<Setting> Settings { get; set; }
 
         public DbSet<GameConfirmation> GameConfirmations { get; set; }
 

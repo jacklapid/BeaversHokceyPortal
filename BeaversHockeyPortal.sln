@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities", "Utilities\Util
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailModule", "EmailModule\EmailModule.csproj", "{1320B7AF-DC6C-432B-B6A8-DC48F606CCF4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggingModule", "LoggingModule\LoggingModule.csproj", "{8C0BA63B-1A5B-4809-B8A7-A55DDC8E1BFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanguageParser", "LanguageParser\LanguageParser.csproj", "{3CEA307B-AC65-474F-AE4D-52E589B82B0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +48,14 @@ Global
 		{1320B7AF-DC6C-432B-B6A8-DC48F606CCF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1320B7AF-DC6C-432B-B6A8-DC48F606CCF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1320B7AF-DC6C-432B-B6A8-DC48F606CCF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C0BA63B-1A5B-4809-B8A7-A55DDC8E1BFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C0BA63B-1A5B-4809-B8A7-A55DDC8E1BFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C0BA63B-1A5B-4809-B8A7-A55DDC8E1BFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C0BA63B-1A5B-4809-B8A7-A55DDC8E1BFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CEA307B-AC65-474F-AE4D-52E589B82B0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CEA307B-AC65-474F-AE4D-52E589B82B0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CEA307B-AC65-474F-AE4D-52E589B82B0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CEA307B-AC65-474F-AE4D-52E589B82B0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

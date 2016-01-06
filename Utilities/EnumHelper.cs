@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities.CustomAttributes;
 
 namespace Utilities
 {
@@ -30,5 +31,19 @@ namespace Utilities
 
             return dic;
         }
+
+        public static List<string> GetEnumAttributeValues<CustomAttributeT>(string itemName) where CustomAttributeT : CustomAttribute
+        {
+            var type = typeof(T);
+
+            //var itemName = Enum.GetName(type, enumItem);
+
+            var field = type.GetField(itemName);
+            var customAttribute = field.GetCustomAttributes(typeof(CustomAttributeT), false);
+
+            var attributeValues = customAttribute.Length > 0 ? ((CustomAttribute)customAttribute[0]).AttributeValues : new List<string>();
+            return attributeValues;
+        }
+
     }
 }

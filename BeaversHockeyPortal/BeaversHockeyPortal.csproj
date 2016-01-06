@@ -67,6 +67,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -75,6 +79,14 @@
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
@@ -186,6 +198,7 @@
     <Compile Include="App_Start\NinjectWebCommon.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AuthorizedControllerWithDbContext.cs" />
     <Compile Include="Controllers\AuthorizedController.cs" />
@@ -211,6 +224,7 @@
     <Compile Include="Models\TeamViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="WebApiControllers\EmailSenderController.cs" />
     <Compile Include="WebUtilities\ControlUtilities.cs" />
     <Compile Include="WebUtilities\ImageUtilities.cs" />
     <Compile Include="WebUtilities\SelectListItemExtensions.cs" />
@@ -312,6 +326,10 @@
     <ProjectReference Include="..\EmailModule\EmailModule.csproj">
       <Project>{1320b7af-dc6c-432b-b6a8-dc48f606ccf4}</Project>
       <Name>EmailModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LoggingModule\LoggingModule.csproj">
+      <Project>{8c0ba63b-1a5b-4809-b8a7-a55ddc8e1bff}</Project>
+      <Name>LoggingModule</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{fe1f0108-8bbb-4a95-a1fe-9e5c328caacc}</Project>

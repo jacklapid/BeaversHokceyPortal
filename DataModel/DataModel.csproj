@@ -76,6 +76,13 @@
     <Compile Include="GameStatistic.cs" />
     <Compile Include="IdentityModels.cs" />
     <Compile Include="INamableEntity.cs" />
+    <Compile Include="Language\ILanguagable.cs" />
+    <Compile Include="Language\ILanguageableDataModelContext.cs" />
+    <Compile Include="Language\LanguageableDataModelContext.cs" />
+    <Compile Include="Language\LanguageableEntity.cs" />
+    <Compile Include="Language\LanguageableEntityExceptions.cs" />
+    <Compile Include="Language\LanguageableGame.cs" />
+    <Compile Include="Language\LanguageablePerson.cs" />
     <Compile Include="Note.cs" />
     <Compile Include="PlayerRegistration.cs" />
     <Compile Include="PlayerPosition.cs" />
@@ -87,7 +94,6 @@
     <Compile Include="Repositories\Repository.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Season.cs" />
-    <Compile Include="Setting.cs" />
     <Compile Include="Team.cs" />
     <Compile Include="UserType.cs" />
   </ItemGroup>
@@ -101,6 +107,7 @@
       <Name>Utilities</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

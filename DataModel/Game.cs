@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataModel
 {
-    public class Game
+    public partial class Game
     {
         public Game()
         {

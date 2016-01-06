@@ -156,10 +156,10 @@ namespace DataModel.Repositories
             return _ctx.Arenas.FirstOrDefault(a => a.Id == ArenaId);
         }
 
-        public string GetSettingValueByKey(string key)
-        {
-            return _ctx.Settings.First(s => s.Key == key).Value;
-        }
+        //public string GetSettingValueByKey(string key)
+        //{
+        //    return _ctx.Settings.First(s => s.Key == key).Value;
+        //}
 
         public bool ConfirmGame(int gameId, int playerId)
         {
@@ -260,7 +260,7 @@ namespace DataModel.Repositories
             return _ctx.PlayerRegistrations.Include(p => p.Manager).Include(p => p.Team).FirstOrDefault(x => x.Token == token);
         }
 
-        public bool CreatePlayerRegistration(string email, int managerId, int teamId)
+        public string CreatePlayerRegistration(string email, int managerId, int teamId)
         {
             var newPlayerRegistration = new PlayerRegistration
             {
@@ -276,7 +276,7 @@ namespace DataModel.Repositories
 
             _ctx.SaveChanges();
 
-            return true;
+            return newPlayerRegistration.Token;
         }
     }
 }

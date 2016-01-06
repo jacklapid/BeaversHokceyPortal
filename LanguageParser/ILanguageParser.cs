@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EmailModule
+namespace LanguageParser
 {
-    interface IEmailSender
+    interface ILanguageParser
     {
-        bool SendEmail(string from, string to, string subject, string body);
+        string ParseForManager(string inputString, int managerId);
     }
 }

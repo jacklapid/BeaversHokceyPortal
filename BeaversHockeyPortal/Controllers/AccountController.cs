@@ -147,7 +147,9 @@ namespace BeaversHockeyPortal.Controllers
 
         private bool HasTokenExpired(PlayerRegistration personToRegister)
         {
-            var experiationDate = personToRegister.TokenGeneratedOn.AddDays(-Utilities.Constants.REGISTRATION_TOKEN_EXPIRATION_DAYS);
+            var registrationTokenExpires = Utilities.WebSiteSettings.GetSettingValue<int>(Utilities.SettingKeys.DAYS_BEFORE_REGISTRATION_TOKEN_EXPIRES);
+
+            var experiationDate = personToRegister.TokenGeneratedOn.AddDays(-registrationTokenExpires);
 
             return experiationDate > DateTime.Now;
         }
@@ -273,7 +275,12 @@ namespace BeaversHockeyPortal.Controllers
 
             if (this.User.Identity.IsAuthenticated)
             {
-                canRegister = true;
+                canRegister = this.User.IsInRole(Utilities.Constants.ADMIN_ROLE) || this.User.IsInRole(Utilities.Constants.MANAGER_ROLE);
+
+                if(!canRegister)
+                {
+                    ModelState.AddModelError("", "The logged user does not have permissions to register new users");
+                }
             }
             else
             {
@@ -283,7 +290,7 @@ namespace BeaversHockeyPortal.Controllers
 
             if (ModelState.IsValid && canRegister)
             {
-                using (TransactionScope transaction = new TransactionScope(System.Transactions.TransactionScopeAsyncFlowOption.Enabled))
+                using (TransactionScope transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
                     try
                     {

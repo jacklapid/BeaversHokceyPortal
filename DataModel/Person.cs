@@ -9,8 +9,12 @@ using System.Threading.Tasks;
 namespace DataModel
 {
     [Table("Persons")]
-    public class Person
+    public partial class Person
     {
+        public Person()
+        {
+
+        }
         public int Id { get; set; }
 
         [Required]

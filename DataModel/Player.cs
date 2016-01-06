@@ -22,5 +22,27 @@ namespace DataModel
         [Required]
         public Manager Manager    { get; set; }
         public Team Team{ get; set; }
+
+        [NotMapped]
+        public bool IsRegular
+        {
+            get { return this.PlayerStatus_Id == (int)Enums.PlayerStatusEnum.Regular; }
+        }
+
+        [NotMapped]
+        public bool IsSpare
+        {
+            get { return this.PlayerStatus_Id == (int)Enums.PlayerStatusEnum.Spare; }
+        }
+        [NotMapped]
+        public bool IsGoalie
+        {
+            get { return this.PlayerStatus_Id == (int)Enums.PlayerPositionEnum.Goalie; }
+        }
+        [NotMapped]
+        public bool IsPlayer
+        {
+            get { return this.PlayerStatus_Id == (int)Enums.PlayerPositionEnum.Player; }
+        }
     }
 }

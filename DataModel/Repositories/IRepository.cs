@@ -48,7 +48,7 @@ namespace DataModel.Repositories
 
         Player GetPlayerByUserId(string userId);
 
-        string GetSettingValueByKey(string key);
+        //string GetSettingValueByKey(string key);
 
         bool ConfirmGame(int gameId, int playerId);
 
@@ -65,6 +65,6 @@ namespace DataModel.Repositories
         IQueryable<EmailTemplate> GetEmailTemplatesForManager(int managerId);
 
         PlayerRegistration GetPlayerToRegisterByToken(string token);
-        bool CreatePlayerRegistration(string email, int managerId, int teamId);
+        string CreatePlayerRegistration(string email, int managerId, int teamId);
     }
 }

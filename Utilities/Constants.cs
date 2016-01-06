@@ -14,6 +14,8 @@ namespace Utilities
 
         public const string ADMIN_EMAIL = "jack@yahoo.ca";
 
-        public const int REGISTRATION_TOKEN_EXPIRATION_DAYS = 90;
+        //public const int REGISTRATION_TOKEN_EXPIRATION_DAYS = 90;
+
+        //public const string FROM_EMAIL_ADDRESS = "admin@BeaversHockeyPortal.ca";
     }
 }
