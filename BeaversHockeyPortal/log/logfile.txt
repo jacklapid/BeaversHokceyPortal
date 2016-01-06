@@ -1,0 +1,2 @@
+2015-12-16 11:19:05 PM: INFO
+Successfully sent email to: woofer20@hotmail.com
