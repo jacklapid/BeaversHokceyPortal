@@ -51,9 +51,8 @@ namespace BeaversHockeyPortal.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Email")]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Display(Name = "User Name")]
+        public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -89,6 +88,10 @@ namespace BeaversHockeyPortal.Models
         [MinLength(2)]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
+
+        [Required]
+        [Display(Name = "User Name")]
+        public string UserName { get; set; }
 
         [Required]
         [EmailAddress]

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace LanguageParser
 {
-    interface ILanguageParser
+    public interface ILanguageParser
     {
-        string ParseForManager(string inputString, int managerId);
+        List<string> ParseForManager(string inputString, string emailTemplateContext, int managerId);
     }
 }

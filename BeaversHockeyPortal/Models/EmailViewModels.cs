@@ -8,6 +8,12 @@ using System.Web.Mvc;
 
 namespace BeaversHockeyPortal.Models
 {
+    public enum ToSelection
+    {
+        Specific = 1,
+        Text
+    }
+
     public class EmailEventViewModel
     {
         [Display(Name = "Email Events")]
@@ -45,6 +51,12 @@ namespace BeaversHockeyPortal.Models
 
     public class EmailTemplateViewModel
     {
+        [Display(Name = "Context")]
+        public string Context { get; set; }
+
+        [Display(Name = "To", Description = "Can be an email address or language fragment")]
+        public string To { get; set; }
+
         [Display(Name = "From")]
         public string From { get; set; }
 
@@ -70,5 +82,11 @@ namespace BeaversHockeyPortal.Models
         [Required]
         public int ManagerId { get; set; }
         public List<SelectListItem> AvailableManagers { get; set; }
+
+        [Display(Name = "Selection For 'TO' Field")]
+       public ToSelection ToSelection { get; set; }
+        //{
+        //    get { return string.IsNullOrWhiteSpace(this.To); }
+        //}
     }
 }

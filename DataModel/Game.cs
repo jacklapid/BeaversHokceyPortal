@@ -47,5 +47,10 @@ namespace DataModel
                 return this.Date.ToString();
             }
         }
+
+        public override string ToString()
+        {
+            return $"{Us.Name} vs. {Them.Name}";
+        }
     }
 }

@@ -9,14 +9,6 @@ namespace DataModel
 {
     public partial class Person : LanguageableEntity
     {
-        private DataModelContext _context;
-
-        public Person(DataModelContext context) : this()
-        {
-            this._context = context;
-            this.ParentLevelEntityId = null;
-        }
-
         public override string EntityName
         {
             get
@@ -29,6 +21,8 @@ namespace DataModel
         {
             switch (attribute)
             {
+                case "Email":
+                    return this.Context.Users.First(u => u.Id == this.ApplicationUser_Id).Email;
                 case "Name":
                 case "":
                     return this.FullName;
@@ -76,14 +70,14 @@ namespace DataModel
 
         private bool IsConfirmedForGame()
         {
-            var gameExists = this.ParentLevelEntityId.HasValue && this._context.Games.Any(g => g.Id == this.ParentLevelEntityId.Value);
+            var gameExists = this.ParentLevelEntityId.HasValue && this.Context.Games.Any(g => g.Id == this.ParentLevelEntityId.Value);
 
             if (!gameExists)
             {
                 throw new ApplicationException($"While Verifying confirmation for player: {this.FullName}, the game against which to verify was not supplied!");
             }
 
-            return this._context.GameConfirmations.Any(gc => gc.Game_Id == this.ParentLevelEntityId.Value && gc.Player_Id == this.Id);
+            return this.Context.GameConfirmations.Any(gc => gc.Game_Id == this.ParentLevelEntityId.Value && gc.Player_Id == this.Id);
         }
     }
 }

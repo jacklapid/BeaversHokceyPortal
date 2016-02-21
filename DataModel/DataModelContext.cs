@@ -25,7 +25,7 @@ namespace DataModel
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<EmailEvent>()
+            modelBuilder.Entity<GameEmailEvent>()
                 .HasMany(et => et.EmailTemplates)
                 .WithMany()
                 .Map(m =>
@@ -35,7 +35,7 @@ namespace DataModel
                     m.MapRightKey("EmailTemplate_Id");
                 });
 
-            modelBuilder.Entity<EmailEvent>()
+            modelBuilder.Entity<GameEmailEvent>()
     .HasMany(et => et.EmailEventTypes)
     .WithMany()
     .Map(m =>
@@ -104,10 +104,12 @@ namespace DataModel
 
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
 
-        public DbSet<EmailEvent> EmailEvents { get; set; }
+        public DbSet<GameEmailEvent> EmailEvents { get; set; }
 
         public DbSet<EmailEventType> EmailEventTypes { get; set; }
 
         public DbSet<PlayerRegistration> PlayerRegistrations { get; set; }
+
+        public DbSet<EmailLog> EmailLogs{ get; set; }
     }
 }

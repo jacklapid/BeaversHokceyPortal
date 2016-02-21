@@ -54,14 +54,14 @@ namespace LanguageParser
             return BitConverter.ToString(hash);
         }
 
-        public string Compute(ILanguageableDataModelContext languageableContext)
+        public List<string> Compute(ILanguageableDataModelContext languageableContext)
         {
             if (!Validate())
             {
-                return "{{ Invalid Language Fragment. Please contact the administrator}}";
+                return new List<string> { "{{ Invalid Language Fragment. Please contact the administrator}}" };
             }
 
-            var result = string.Empty;
+            var results = new List<string> ();
 
             try
             {
@@ -74,8 +74,7 @@ namespace LanguageParser
 
                     if (level.ItemName == LanguageConstants.Levels.Self.ToString())
                     {
-                        result = string.Join(ENTITY_SEPARATOR, languageableEntities
-                            .Select(le => le.GetSelfValue(level.HasAttribute ? level.LanguageAttribute.ItemName : string.Empty)));
+                        results.AddRange(languageableEntities.Select(le => le.GetSelfValue(level.HasAttribute ? level.LanguageAttribute.ItemName : string.Empty)));
 
                         break;
                     }
@@ -86,7 +85,7 @@ namespace LanguageParser
                             switch (levelItemEnum)
                             {
                                 case LanguageConstants.Levels.Game:
-                                    languageableEntities = languageableContext.GetGames();
+                                    languageableEntities = languageableContext.GetGames().ToList();
                                     break;
                                 default:
                                     throw new ApplicationException("Not supported TOP Level Item: " + level.ItemName);
@@ -109,7 +108,7 @@ namespace LanguageParser
 
                         if (level.HasAttribute)
                         {
-                            languageableEntities = languageableEntities.Where(le => le.FilteredEntity(level.LanguageAttribute.ItemName));
+                            languageableEntities = languageableEntities.Where(le => le.FilteredEntity(level.LanguageAttribute.ItemName)).ToList();
                         }
                     }
 
@@ -119,10 +118,10 @@ namespace LanguageParser
             {
                 LoggingModule.Logger.Instance.LogError("Error parsing Language Fragment: " + this.ToString(), ex);
 
-                result = "{{ Error in Language Fragment. Please contact the administrator}}";
+                results = new List<string> { "{{ Error in Language Fragment. Please contact the administrator}}" };
             }
 
-            return result;
+            return results;
         }
 
         private bool Validate()

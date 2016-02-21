@@ -80,6 +80,9 @@ namespace LanguageParser
             [Description("UN-Confirmed Spares")]
             [ForItem("Player")]
             UnConfirmedSpare,
+
+            [ForItem("Self")]
+            Email,
         }
 
         public static string GetLanguageHelp()

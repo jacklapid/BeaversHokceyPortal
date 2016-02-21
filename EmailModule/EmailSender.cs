@@ -10,6 +10,10 @@ namespace EmailModule
 {
     public class EmailSender : IEmailSender
     {
+        public EmailSender()
+        {
+            int i = 0;
+        }
         public bool SendEmail(string from, string to, string subject, string body)
         {
             try
@@ -25,7 +29,7 @@ namespace EmailModule
 
                 //Add the HTML and Text bodies
                 myMessage.Html = body;
-                myMessage.Text = body;
+                //myMessage.Text = body;
 
                 // SENDGRID_APIKEY: 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
                 // SENDGRID_USER: jack

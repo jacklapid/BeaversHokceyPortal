@@ -18,9 +18,13 @@ namespace DataModel
 
         public string From{ get; set; }
 
+        public string To { get; set; }
+
         public string Subject { get; set; }
 
         public string Body { get; set; }
+
+        public string Context { get; set; }
 
         public ICollection<Person> ToPersons{ get; set; }
 
@@ -35,6 +39,14 @@ namespace DataModel
             get
             {
                 return this.Subject;
+            }
+        }
+
+        public bool SendToSpecificUsers
+        {
+            get
+            {
+                return string.IsNullOrWhiteSpace(this.To);
             }
         }
     }

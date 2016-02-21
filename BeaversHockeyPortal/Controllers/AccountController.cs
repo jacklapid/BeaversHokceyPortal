@@ -56,15 +56,15 @@ namespace BeaversHockeyPortal.Controllers
         //
         // GET: /Account/Login
         [AllowAnonymous]
-        public ActionResult Login(string returnUrl, string email)
+        public ActionResult Login(string returnUrl, string userName)
         {
             ViewBag.ReturnUrl = returnUrl;
 
             var model = new LoginViewModel();
 
-            if (!string.IsNullOrWhiteSpace(email))
+            if (!string.IsNullOrWhiteSpace(userName))
             {
-                model.Email = email;
+                model.UserName = userName;
             }
 
             return View(model);
@@ -84,7 +84,7 @@ namespace BeaversHockeyPortal.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var userName = model.Email;
+            var userName = model.UserName;
             var result = await SignInManager.PasswordSignInAsync(userName, model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
@@ -215,19 +215,40 @@ namespace BeaversHockeyPortal.Controllers
         }
 
         [AllowAnonymous]
+        //[Route("Account/Register/token")]
         public ActionResult Register(string token)
         {
             var model = new RegisterViewModel();
 
-            if (this.User.Identity.IsAuthenticated)
+            var canRegister = false;
+
+            if (this.User.Identity.IsAuthenticated && !string.IsNullOrWhiteSpace(token))
             {
-                this.PopulateOptionsForLoggedUser(model);
+                canRegister = false;
+                ModelState.AddModelError("", $"You may not be Logged-In and use the registration link at the same time.");
+            }
+            else if (!this.User.Identity.IsAuthenticated && string.IsNullOrWhiteSpace(token))
+            {
+                canRegister = false;
+                ModelState.AddModelError("", "You may not register yourself (registration Token is NOT provided) and you may not register another user (you are not logged in in the system).");
+            }
+            else if (this.User.Identity.IsAuthenticated)
+            {
+                canRegister = this.User.IsInRole(Utilities.Constants.ADMIN_ROLE) || this.User.IsInRole(Utilities.Constants.MANAGER_ROLE);
+
+                if (canRegister)
+                {
+                    this.PopulateOptionsForLoggedUser(model);
+                }
+                else
+                {
+                    ModelState.AddModelError("", $"Your user role does not give you enough permissions to register a new user.");
+                }
             }
             else
             {
-
                 var playerToRegister = this._Repo.GetPlayerToRegisterByToken(token);
-                var isTokenValid = ValidateToken(playerToRegister);
+                var isTokenValid = canRegister = ValidateToken(playerToRegister);
 
                 if (isTokenValid)
                 {
@@ -236,6 +257,8 @@ namespace BeaversHockeyPortal.Controllers
                     model.Email = playerToRegister.PlayerEmail;
                 }
             }
+
+            ViewData["CanRegister"] = canRegister;
 
             return View(model);
         }
@@ -267,7 +290,7 @@ namespace BeaversHockeyPortal.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model, string token)
+        public async Task<ActionResult> Register(string token, [System.Web.Http.FromBody]RegisterViewModel model)
         {
             var canRegister = false;
             var success = false;
@@ -277,26 +300,53 @@ namespace BeaversHockeyPortal.Controllers
             {
                 canRegister = this.User.IsInRole(Utilities.Constants.ADMIN_ROLE) || this.User.IsInRole(Utilities.Constants.MANAGER_ROLE);
 
-                if(!canRegister)
+                if (!canRegister)
                 {
                     ModelState.AddModelError("", "The logged user does not have permissions to register new users");
                 }
             }
             else
             {
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    ModelState.AddModelError("", "Registration Token is NOT provided.");
+                }
+
                 playerToRegister = this._Repo.GetPlayerToRegisterByToken(token);
                 canRegister = ValidateToken(playerToRegister);
+
+                if (!ModelState.IsValid)
+                {
+                    this.PopulateOptionsForRegisteringPlayer(model, playerToRegister);
+
+                    model.Email = playerToRegister.PlayerEmail;
+
+                    return View(model);
+                }
             }
 
             if (ModelState.IsValid && canRegister)
             {
+                var exisitngUsers = _Repo.GetAllRegistredUsers();
+                var isUserNameAreadyUser = exisitngUsers.Any(user => user.UserName.Equals(model.UserName));
+
+                if (isUserNameAreadyUser)
+                {
+                    AddErrors($"User Name: '{model.UserName}' already taken");
+                    canRegister = false;
+                }
+            }
+
+            if (ModelState.IsValid && canRegister)
+            {
+                #region Create User Transaction
                 using (TransactionScope transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
                     try
                     {
                         var user = new ApplicationUser
                         {
-                            UserName = model.Email,
+                            UserName = model.UserName,
                             Email = model.Email,
                         };
 
@@ -387,11 +437,12 @@ namespace BeaversHockeyPortal.Controllers
                         throw newException;
                     }
                 }
+                #endregion Create User Transaction
             }
 
             if (success && playerToRegister != null)
             {
-                return RedirectToAction("Login", "Account", new { email = playerToRegister.PlayerEmail });
+                return RedirectToAction("Login", "Account", new { email = model.UserName });
             }
 
             if (success)

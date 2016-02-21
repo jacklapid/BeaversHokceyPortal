@@ -14,19 +14,20 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li class="dropdown-submenu">
-                        <a tabindex="-1" href="#">Player Portal ...</a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                @Html.ActionLink("Players", "Players", "Player")
-                            </li>
-                            <li>
-                                @Html.ActionLink("Confirm Next Games", "ConfirmGames", "Player")
-                            </li>
-                        </ul>
-
-
-                    </li>
+                    @if (this.User.Identity.IsAuthenticated)
+                    {
+                        <li class="dropdown-submenu">
+                            <a tabindex="-1" href="#">Player Portal ...</a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    @Html.ActionLink("Players", "Players", "Player")
+                                </li>
+                                <li>
+                                    @Html.ActionLink("Confirm Next Games", "ConfirmGames", "Player")
+                                </li>
+                            </ul>
+                        </li>
+                    }
                     @if (this.User.IsInRole(Utilities.Constants.MANAGER_ROLE))
                     {
                         <li class="dropdown-submenu">
@@ -68,7 +69,7 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-   @RenderSection("scripts", required: false)
+    @RenderSection("scripts", required: false)
 
 </body>
 </html>

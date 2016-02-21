@@ -13,14 +13,19 @@ namespace DataModel
 
         public IEnumerable<ILanguagable> GetGames()
         {
+            List<Game> games = null;
             if (this.ManagerId.HasValue)
             {
-                return this.Games.Where(g => g.Manager.Id == this.ManagerId.Value).ToList();
+                games = this.Games.Where(g => g.Manager.Id == this.ManagerId.Value).ToList();
             }
             else
             {
-                return this.Games.ToList();
+                games = this.Games.ToList();
             }
+
+            games.ForEach(game => game.SetContext(this));
+
+            return games;
         }
     }
 }

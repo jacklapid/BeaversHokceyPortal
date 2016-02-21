@@ -63,6 +63,10 @@
       <HintPath>..\packages\Ninject.MVC5.3.2.1.0\lib\net45-full\Ninject.Web.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Ninject.Web.WebApi, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Web.WebApi.3.2.4.0\lib\net45-full\Ninject.Web.WebApi.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -130,6 +134,10 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
       <HintPath>..\packages\WebActivatorEx.2.0\lib\net40\WebActivatorEx.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebApiContrib.IoC.Ninject, Version=0.9.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebApiContrib.IoC.Ninject.0.9.3.0\lib\net40\WebApiContrib.IoC.Ninject.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="WebGrease">
@@ -200,6 +208,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Api\DummyController.cs" />
     <Compile Include="Controllers\AuthorizedControllerWithDbContext.cs" />
     <Compile Include="Controllers\AuthorizedController.cs" />
     <Compile Include="Controllers\ControllerHelper.cs" />
@@ -224,7 +233,7 @@
     <Compile Include="Models\TeamViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="WebApiControllers\EmailSenderController.cs" />
+    <Compile Include="Controllers\Api\EmailsController.cs" />
     <Compile Include="WebUtilities\ControlUtilities.cs" />
     <Compile Include="WebUtilities\ImageUtilities.cs" />
     <Compile Include="WebUtilities\SelectListItemExtensions.cs" />
@@ -326,6 +335,10 @@
     <ProjectReference Include="..\EmailModule\EmailModule.csproj">
       <Project>{1320b7af-dc6c-432b-b6a8-dc48f606ccf4}</Project>
       <Name>EmailModule</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LanguageParser\LanguageParser.csproj">
+      <Project>{3cea307b-ac65-474f-ae4d-52e589b82b0b}</Project>
+      <Name>LanguageParser</Name>
     </ProjectReference>
     <ProjectReference Include="..\LoggingModule\LoggingModule.csproj">
       <Project>{8c0ba63b-1a5b-4809-b8a7-a55ddc8e1bff}</Project>

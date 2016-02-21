@@ -235,7 +235,7 @@ namespace DataModel.Repositories
             return _ctx.EmailTemplates.Where(et => et.Manager.Id == managerId);
         }
 
-        public bool CreateEmailTemplate(int[] toUserIds, int[] toPlayerStatusIds, int[] toUserTypeIds, string from, string subject, string body, int managerId)
+        public bool CreateEmailTemplateToPredefiniedUsers(int[] toUserIds, int[] toPlayerStatusIds, int[] toUserTypeIds, string from, string subject, string body, string context, int managerId)
         {
             var emailTemplate = new EmailTemplate
             {
@@ -245,6 +245,27 @@ namespace DataModel.Repositories
                 From = from,
                 Subject = subject,
                 Body = body,
+                Context = context,
+                Manager = this.GetManagerById(managerId)
+            };
+
+            _ctx.EmailTemplates.Add(emailTemplate);
+
+            _ctx.SaveChanges();
+
+            return true;
+        }
+
+
+        public bool CreateEmailTemplate(string to, string from, string subject, string body, string context, int managerId)
+        {
+            var emailTemplate = new EmailTemplate
+            {
+                To = to,
+                From = from,
+                Subject = subject,
+                Body = body,
+                Context = context,
                 Manager = this.GetManagerById(managerId)
             };
 
@@ -277,6 +298,11 @@ namespace DataModel.Repositories
             _ctx.SaveChanges();
 
             return newPlayerRegistration.Token;
+        }
+
+        public IQueryable<ApplicationUser> GetAllRegistredUsers()
+        {
+            return _ctx.Users;
         }
     }
 }

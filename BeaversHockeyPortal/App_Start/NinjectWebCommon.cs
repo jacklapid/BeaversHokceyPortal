@@ -11,6 +11,12 @@ namespace BeaversHockeyPortal.App_Start
     using Ninject;
     using Ninject.Web.Common;
     using DataModel.Repositories;
+    using EmailModule;
+    using LanguageParser;
+    using DataModel.Language;
+    using DataModel;
+    using System.Web.Http;
+    using WebApiContrib.IoC.Ninject;
 
     public static class NinjectWebCommon 
     {
@@ -47,6 +53,9 @@ namespace BeaversHockeyPortal.App_Start
                 kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
 
                 RegisterServices(kernel);
+
+                GlobalConfiguration.Configuration.DependencyResolver = new NinjectResolver(kernel);
+                
                 return kernel;
             }
             catch
@@ -62,8 +71,15 @@ namespace BeaversHockeyPortal.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-            kernel.Bind<DataModel.DataModelContext>().To<DataModel.DataModelContext>().InRequestScope();
+            kernel.Bind<DataModelContext>().To<DataModelContext>().InRequestScope();
+
+            kernel.Bind<ILanguageableDataModelContext>().To<DataModelContext>().InRequestScope();
+
             kernel.Bind<IRepository>().To<Repository>().InRequestScope();
-        }        
+
+            kernel.Bind<IEmailSender>().To<EmailSender>().InRequestScope();
+
+            kernel.Bind<ILanguageParser>().To<LanguageParser>().InRequestScope();
+        }
     }
 }

@@ -9,8 +9,6 @@ namespace DataModel
 {
     public partial class Game : LanguageableEntity
     {
-        private DataModelContext _context;
-
         public override string EntityName
         {
             get
@@ -19,19 +17,17 @@ namespace DataModel
             }
         }
 
-        public Game(DataModelContext context) : this()
-        {
-            this._context = context;
-            this.ParentLevelEntityId = null;
-        }
-
         public override IEnumerable<ILanguagable> GetPlayers()
         {
             var players = this.ManagerId.HasValue
-                ? this._context.Persons.OfType<Player>().Where(p => p.Manager.Id == this.ManagerId.Value).ToList()
-                : this._context.Persons.OfType<Player>().ToList();
+                ? this.Context.Persons.OfType<Player>().Where(p => p.Manager.Id == this.ManagerId.Value).ToList()
+                : this.Context.Persons.OfType<Player>().ToList();
 
-            players.ForEach(p => p.ParentLevelEntityId = this.Id);
+            players.ForEach(p =>
+            {
+                p.ParentLevelEntityId = this.Id;
+                p.SetContext(this.Context);
+            });
 
             return players;
         }
@@ -59,7 +55,7 @@ namespace DataModel
                 return true;
             }
 
-            var orderedGames = _context.Games.OrderBy(g => g.Date);
+            var orderedGames = this.Context.Games.OrderBy(g => g.Date);
 
             switch (attribute)
             {

@@ -9,6 +9,14 @@ namespace DataModel.Language
 {
     public abstract class LanguageableEntity : ILanguagable
     {
+        [NotMapped]
+        public DataModelContext Context { get; private set; }
+
+        public void SetContext(DataModelContext context)
+        {
+            this.Context = context;
+        }
+
         public virtual IEnumerable<ILanguagable> GetGames()
         {
             throw new LanguageItemNotSupportedException("Game", this.EntityName);
@@ -36,6 +44,10 @@ namespace DataModel.Language
             {
                 return this.ToString();
             }
+        }
+        public LanguageableEntity()
+        {
+            this.ParentLevelEntityId = null;
         }
 
         [NotMapped]

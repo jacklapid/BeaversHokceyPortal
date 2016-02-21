@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DataModel
 {
-    public class EmailEvent
+    public class GameEmailEvent
     {
-        public EmailEvent()
+        public GameEmailEvent()
         {
             EmailEventTypes = new List<EmailEventType>();
             EmailTemplates = new List<EmailTemplate>();

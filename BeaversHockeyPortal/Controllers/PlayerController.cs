@@ -149,14 +149,13 @@ namespace BeaversHockeyPortal.Controllers
             {
                 var success = false;
 
+                var token = this._Repo.CreatePlayerRegistration(
+model.Email,
+model.ManagerId,
+model.TeamId);
+
                 using (TransactionScope transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
-                    var token = this._Repo.CreatePlayerRegistration(
-                    model.Email,
-                    model.ManagerId,
-                    model.TeamId
-                    );
-
                     success = !string.IsNullOrWhiteSpace(token);
 
                     if (success)
@@ -164,12 +163,12 @@ namespace BeaversHockeyPortal.Controllers
                         #region SEND EMAIL
                         var emailSender = new EmailSender();
 
-                        var link = $"{WebSiteSettings.GetSettingValue<string>(SettingKeys.PHYSICAL_SITE_ADDRESS)}/Account/Register/{token}";
+                        var link = $"{WebSiteSettings.GetSettingValue<string>(SettingKeys.PHYSICAL_SITE_ADDRESS)}/Account/Register?token={token}";
 
                         var body = "<html><head></head><body>" +
                             "<p> Please follow this " +
-                            $"<a target=\"_blank\" href=\"{link}\">link</a>"+
-                            " to register for your <b>Beavers Hockey Portal</b></p>" + 
+                            $"<a target=\"_blank\" href=\"{link}\">link</a>" +
+                            " to register for your <b>Beavers Hockey Portal</b></p>" +
                             "</body></html>";
 
                         try

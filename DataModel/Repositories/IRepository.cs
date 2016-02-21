@@ -19,7 +19,6 @@ namespace DataModel.Repositories
 
         Manager GetManagerByUserId(string userId);
 
-
         Team GetTeamById(int teamId);
 
         IQueryable<Team> GetTeamsForManager(int managerId);
@@ -59,12 +58,16 @@ namespace DataModel.Repositories
         IQueryable<Season> GetSeasons();
 
         Dictionary<int, bool> GetPlayerGameConfirmationStatuses(int playerId, IEnumerable<int> gameIds);
-        bool CreateEmailTemplate(int[] toUserIds, int[] toPlayerStatusIds, int[] toUserTypeIds, string from, string subject, string body, int managerId);
+
+        bool CreateEmailTemplateToPredefiniedUsers(int[] toUserIds, int[] toPlayerStatusIds, int[] toUserTypeIds, string from, string subject, string body, string context, int managerId);
+
+        bool CreateEmailTemplate(string to, string from, string subject, string body, string context, int managerId);
         bool GetPlayerGameConfirmationStatus(int playerId, int gameId);
 
         IQueryable<EmailTemplate> GetEmailTemplatesForManager(int managerId);
 
         PlayerRegistration GetPlayerToRegisterByToken(string token);
         string CreatePlayerRegistration(string email, int managerId, int teamId);
+        IQueryable<ApplicationUser> GetAllRegistredUsers();
     }
 }

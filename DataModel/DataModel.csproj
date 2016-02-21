@@ -64,6 +64,7 @@
     <Compile Include="DataModelMigrationConfiguration.cs" />
     <Compile Include="EmailEvent.cs" />
     <Compile Include="EmailEventType.cs" />
+    <Compile Include="EmailLog.cs" />
     <Compile Include="EmailTemplate.cs" />
     <Compile Include="Enums\EmailEventTypeEnum.cs" />
     <Compile Include="Enums\RoleEnum.cs" />

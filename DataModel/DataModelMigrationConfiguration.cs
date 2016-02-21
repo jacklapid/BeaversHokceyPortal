@@ -29,7 +29,7 @@ namespace DataModel
 
             var adminUser = new ApplicationUser
             {
-                UserName = Utilities.Constants.ADMIN_EMAIL,
+                UserName = Utilities.Constants.ADMIN,
                 Email = Utilities.Constants.ADMIN_EMAIL,
             };
 
@@ -42,7 +42,7 @@ namespace DataModel
 
             var managerUser = new ApplicationUser
             {
-                UserName = "manager@yahoo.ca",
+                UserName = "Manager",
                 Email = "manager@yahoo.ca",
             };
 

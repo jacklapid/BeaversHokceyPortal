@@ -48,7 +48,7 @@ namespace LoggingModule
                 return;
             }
 
-            lock(lockObj)
+            lock (lockObj)
             {
                 using (StreamWriter streamWriter = new StreamWriter(filePath))
                 {
@@ -63,7 +63,14 @@ namespace LoggingModule
         {
             if (_instance != null)
             {
-                WriteLine($"{DateTime.Now.ToString()}: ERROR\n{error}\n{ex.Message}\n{ex.StackTrace}");
+                if (ex != null)
+                {
+                    WriteLine($"{DateTime.Now.ToString()}: ERROR\n{error}\n{ex.Message}\n{ex.StackTrace}");
+                }
+                else
+                {
+                    WriteLine($"{DateTime.Now.ToString()}: ERROR\n{error}");
+                }
             }
         }
 

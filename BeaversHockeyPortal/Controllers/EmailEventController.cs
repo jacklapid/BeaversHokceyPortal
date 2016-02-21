@@ -71,7 +71,7 @@ namespace BeaversHockeyPortal.Controllers
             {
                 try
                 {
-                    _ctx.EmailEvents.Add(new EmailEvent
+                    _ctx.EmailEvents.Add(new GameEmailEvent
                     {
                         DaysBeforeGame = model.DaysBeforeGame,
                         DaysForReoccurrence = model.ReoccurrenceDays,

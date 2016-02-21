@@ -7,6 +7,7 @@ using Microsoft.Owin.Security.Google;
 using Owin;
 using BeaversHockeyPortal.Models;
 using DataModel;
+using System.Net;
 
 namespace BeaversHockeyPortal
 {
@@ -33,9 +34,21 @@ namespace BeaversHockeyPortal
                     // This is a security feature which is used when you change a password or add an external login to your account.  
                     OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
                         validateInterval: TimeSpan.FromMinutes(30),
-                        regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
+                        regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager)),
+
+                    OnApplyRedirect = ctx =>
+                    {
+                        if (ctx.Request.Path.StartsWithSegments(new PathString("/api")) && ctx.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
+                        {
+                            ctx.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                        }
+                        else
+                        {
+                            ctx.Response.Redirect(ctx.RedirectUri);
+                        }
+                    }
                 }
-            });            
+            });
             app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Enables the application to temporarily store user information when they are verifying the second factor in the two-factor authentication process.

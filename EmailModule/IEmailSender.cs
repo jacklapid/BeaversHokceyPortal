@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EmailModule
 {
-    interface IEmailSender
+    public interface IEmailSender
     {
         bool SendEmail(string from, string to, string subject, string body);
     }
