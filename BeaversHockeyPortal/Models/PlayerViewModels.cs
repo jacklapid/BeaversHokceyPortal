@@ -38,6 +38,11 @@ namespace BeaversHockeyPortal.Models
     public class PlayerViewModels
     {
         [Required]
+        public string Username { get; set; }
+        [Required]
+        public string Email { get; set; }
+
+        [Required]
         public string FirstName { get; set; }
 
         [Required]
@@ -49,6 +54,8 @@ namespace BeaversHockeyPortal.Models
         public string ImageUrl { get; set; }
 
         public string Position { get; set; }
+
+        public string Status { get; set; }
 
         public int PositionId { get; set; }
 

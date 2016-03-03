@@ -19,27 +19,39 @@ namespace LanguageParser
             this._languageableContext = languageableContext;
         }
 
-        public List<string> ParseForManager(string inputString, string emailTemplateContext, int managerId)
+        public List<string> ParseForManager(string inputString, string emailTemplateContext, int managerId, bool aggrigateParsedResult)
         {
             this._languageableContext.ManagerId = managerId;
 
-            return this.Parse(inputString, emailTemplateContext);
+            return this.Parse(inputString, emailTemplateContext, aggrigateParsedResult);
         }
 
-        private List<string> Parse(string inputString, string emailTemplateContext)
+        private List<string> Parse(string inputString, string emailTemplateContext, bool aggrigateParsedResult)
         {
-            if (string.IsNullOrWhiteSpace (inputString ) || string.IsNullOrWhiteSpace(emailTemplateContext))
+            if (!HasLanguageFragment(inputString))
             {
-                return new List<string>(0);
+                return new List<string>(1) { inputString };
             }
 
             List<string> results = null;
 
             foreach (var languageFragmentString in GetLanguageFragmentStrings(inputString))
             {
-                var fullLanguageString = $"{emailTemplateContext}.{languageFragmentString}";
+                // pre-pend language string with language context if any
+                var fullLanguageString = !string.IsNullOrWhiteSpace(emailTemplateContext)? $"{emailTemplateContext}.{languageFragmentString}" : languageFragmentString;
                 var languageFragment = LanguageFragment.Parse(fullLanguageString);
+
+                // Compute language fragment
                 var computedFragments = languageFragment.Compute(this._languageableContext);
+
+                // if the result of parsing is to be aggrigated, we need to String.Join
+                if (aggrigateParsedResult)
+                {
+                    computedFragments = new List<string>
+                    {
+                        string.Join(", ", computedFragments)
+                    };
+                }
 
                 // CLONE the input for each occurrence of the ouput (Ex: each copy for each player who would be receiving this email)
                 if (results == null)
@@ -60,7 +72,7 @@ namespace LanguageParser
 
                 // Error-scenario, when number computed results does not match the number of result strings 
                 // Ex: multiplier 1 : Player Name; multiplier 2: Games in season. We cannot produce this!!!!
-                if (results.Count() != computedFragments.Count())
+                if (computedFragments.Count() != 1 && results.Count() != computedFragments.Count())
                 {
                     LoggingModule.Logger.Instance.LogWarning($"number computed results does not match the number of result strings. \nInput string: {inputString}, context: {emailTemplateContext} ");
                 }
@@ -69,7 +81,7 @@ namespace LanguageParser
                     // When all good, replace each fragment is each input string
                     for (int i = 0; i < results.Count(); i++)
                     {
-                        results[i] = results[i].Replace("{{" + languageFragmentString + "}}", computedFragments[i]);
+                        results[i] = results[i].Replace("{{" + languageFragmentString + "}}", computedFragments.Count() == 1 ? computedFragments[0] : computedFragments[i]);
                     }
                 }
             }
@@ -95,6 +107,11 @@ namespace LanguageParser
             //}
 
             //return sb.ToString();
+        }
+
+        public static bool HasLanguageFragment(string inputString)
+        {
+            return GetLanguageFragmentStrings(inputString).Any();
         }
 
         internal static List<string> GetLanguageFragmentStrings(string inputString)

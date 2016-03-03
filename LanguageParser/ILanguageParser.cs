@@ -8,6 +8,6 @@ namespace LanguageParser
 {
     public interface ILanguageParser
     {
-        List<string> ParseForManager(string inputString, string emailTemplateContext, int managerId);
+        List<string> ParseForManager(string inputString, string emailTemplateContext, int managerId, bool aggrigateParsedResult);
     }
 }

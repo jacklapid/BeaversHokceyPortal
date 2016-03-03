@@ -94,7 +94,7 @@ namespace BeaversHockeyPortal.Controllers
             }
 
             var gamesVM = games
-                .OrderByDescending(g => g.Date)
+                .OrderBy(g => g.Date)
                 .Select(g => new GameListViewModel
                 {
                     Id = g.Id,
@@ -114,14 +114,32 @@ namespace BeaversHockeyPortal.Controllers
         {
             var userID = User.Identity.GetUserId();
 
-            var players = ControllerHelper.GetPlayersInScope(userID, this._Repo).ToList()
-        .OrderBy(p => p.PlayerStatus_Id == (int)PlayerStatusEnum.Regular)
+            var playersInScope = ControllerHelper.GetPlayersInScope(userID, this._Repo);
+
+            var playerUserIds = playersInScope.Select(p => p.ApplicationUser_Id).ToList();
+
+            var playerUsers = _Repo.GetAllRegistredUsers()
+                .Where(user => playerUserIds.Contains(user.Id))
+                .Select(user => new
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email
+                })
+                .ToList();
+
+            var players = playersInScope
+                .ToList()
+                .OrderBy(p => p.PlayerStatus_Id == (int)PlayerStatusEnum.Regular)
                 .ThenBy(p => p.FullName)
         .Select(p => new PlayerViewModels
         {
+            Username = playerUsers.First(u => u.Id == p.ApplicationUser_Id).UserName,
+            Email = playerUsers.First(u => u.Id == p.ApplicationUser_Id).Email,
             FirstName = p.FirstName,
             LastName = p.LastName,
-            Position = Enum.GetName(typeof(DataModel.Enums.PlayerPositionEnum), p.PlayerPosition_Id),
+            Position = Enum.GetName(typeof(PlayerPositionEnum), p.PlayerPosition_Id),
+            Status = Enum.GetName(typeof(PlayerStatusEnum), p.PlayerStatus_Id),
             PositionId = p.PlayerPosition_Id,
             Team = p.Team != null ? p.Team.Name : string.Empty,
             Manageer = p.Manager != null ? p.Manager.FullName : string.Empty

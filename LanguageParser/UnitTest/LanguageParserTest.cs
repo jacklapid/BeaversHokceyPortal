@@ -25,6 +25,25 @@ namespace LanguageParser.UnitTest
         }
 
         [TestMethod]
+        public void TestLanguageParserRegex_Pass_GetFragments_2()
+        {
+            var inputString = @"Hi {{[[Player:Regular]].[[Self]]}},
+
+Your next game is at {{[[Self:Date]]}}
+
+Please confirm at:
+http://localhost:59665/Player/ConfirmGames
+
+See you then!";
+
+            var languageFragments = LanguageParser.GetLanguageFragmentStrings(inputString);
+
+            Assert.AreEqual(languageFragments.Count(), 2);
+            Assert.AreEqual(languageFragments[0], "[[Player:Regular]].[[Self]]");
+            Assert.AreEqual(languageFragments[1], "[[Self:Date]]");
+        }
+
+        [TestMethod]
         public void TestParser_NoLanguageFragments_Pass()
         {
             var context = new LanguageableDataModelContext_Mockup();
@@ -34,7 +53,7 @@ namespace LanguageParser.UnitTest
             ILanguageParser languageParser = new LanguageParser(context);
             var input = "some string without any language fragments";
             var templateContext = string.Empty;
-            var output = languageParser.ParseForManager(input, templateContext, 1).First();
+            var output = languageParser.ParseForManager(input, templateContext, 1, false).First();
 
             Assert.AreEqual(input, output);
         }
@@ -58,7 +77,7 @@ namespace LanguageParser.UnitTest
             ILanguageParser languageParser = new LanguageParser(context);
             var input = string.Format(templateFormat, "{{[[Game:Next]].[[Self:Date]]}}");
             var templateContext = string.Empty;
-            var actualOutput = languageParser.ParseForManager(input, templateContext, 1);
+            var actualOutput = languageParser.ParseForManager(input, templateContext, 1, false);
 
             Assert.AreEqual(expectedOutput, actualOutput);
         }
@@ -90,7 +109,7 @@ namespace LanguageParser.UnitTest
             ILanguageParser languageParser = new LanguageParser(context);
             var input = string.Format(templateFormat, "{{[[Game:Next]].[[Player:Regular]].[[Self]]}}");
             var templateContext = string.Empty;
-            var actualOutput = languageParser.ParseForManager(input, templateContext, 1);
+            var actualOutput = languageParser.ParseForManager(input, templateContext, 1, false);
 
             Assert.AreEqual(expectedOutput, actualOutput);
         }
@@ -124,7 +143,7 @@ namespace LanguageParser.UnitTest
             ILanguageParser languageParser = new LanguageParser(context);
             var input = string.Format(templateFormat, "{{[[Game:AfterNext]].[[Player:Spare]].[[Self:Name]]}}");
             var templateContext = string.Empty;
-            var actualOutput = languageParser.ParseForManager(input, templateContext, 1);
+            var actualOutput = languageParser.ParseForManager(input, templateContext, 1, false);
 
             Assert.AreEqual(expectedOutput, actualOutput);
         }
@@ -161,7 +180,7 @@ namespace LanguageParser.UnitTest
             var input = string.Format(templateFormat, "{{[[Game:AfterNext]].[[Player:Spare]].[[Self:Name]]}}");
 
             var templateContext = string.Empty;
-            var actualOutput = languageParser.ParseForManager(input, templateContext, 11);
+            var actualOutput = languageParser.ParseForManager(input, templateContext, 11, false);
 
             Assert.AreNotEqual(expectedOutput, actualOutput);
         }

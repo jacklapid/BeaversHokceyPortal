@@ -26,6 +26,8 @@ namespace DataModel
 
         public string Context { get; set; }
 
+        public bool AggrigateLanguageResults { get; set; }
+
         public ICollection<Person> ToPersons{ get; set; }
 
         public ICollection<UserType> ToUserTypes { get; set; }

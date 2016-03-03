@@ -27,6 +27,15 @@
             }
         </div>
         <div class="col-md-8">
+            @if (this.User.IsInRole(Utilities.Constants.MANAGER_ROLE) || this.User.IsInRole(Utilities.Constants.ADMIN_ROLE))
+            {
+                <div style="margin-bottom: 5px;">
+                    <div class="col-md-8 text-primary">USERNAME: @player.Username</div>
+                    <div class="col-md-8 text-primary">EMAIL: @player.Email</div>
+                    <br />
+                    <div class="col-md-8">Status: @player.Status</div>
+                </div>
+            }
             <div class="col-md-8">First Name: @player.FirstName</div>
             <div class="col-md-8">Last Name: @player.LastName</div>
             <div class="col-md-8">Position: @player.Position</div>

@@ -28,6 +28,7 @@ namespace BeaversHockeyPortal.Controllers
                 Subject = et.Subject,
                 To = et.To,
                 Context = et.Context,
+                AggrigateLanguageResults = et.AggrigateLanguageResults
             });
 
             return View(emailTemplatesVM);
@@ -73,7 +74,8 @@ namespace BeaversHockeyPortal.Controllers
                      model.Subject,
                      model.Body,
                      model.Context,
-                     model.ManagerId);
+                     model.ManagerId,
+                     model.AggrigateLanguageResults);
                 }
                 else if (model.ToSelection == ToSelection.Text)
                 {
@@ -83,7 +85,8 @@ namespace BeaversHockeyPortal.Controllers
                      model.Subject,
                      model.Body,
                      model.Context,
-                     model.ManagerId);
+                     model.ManagerId,
+                     model.AggrigateLanguageResults);
                 }
                 if (success)
                 {

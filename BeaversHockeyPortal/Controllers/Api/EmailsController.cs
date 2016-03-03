@@ -236,8 +236,8 @@ namespace BeaversHockeyPortal.Controllers.Api
             try
             {
                 var to = this.GetTo(emailTemplate);
-                var body = this._languageParser.ParseForManager(emailTemplate.Body, emailTemplate.Context, emailTemplate.Manager.Id);
-                var subject = this._languageParser.ParseForManager(emailTemplate.Subject, emailTemplate.Context, emailTemplate.Manager.Id);
+                var body = this._languageParser.ParseForManager(emailTemplate.Body, emailTemplate.Context, emailTemplate.Manager.Id, emailTemplate.AggrigateLanguageResults);
+                var subject = this._languageParser.ParseForManager(emailTemplate.Subject, emailTemplate.Context, emailTemplate.Manager.Id, emailTemplate.AggrigateLanguageResults);
 
                 var validEmailParsing = emailSucceeded =
                     to.Count() == 1 ||
@@ -272,7 +272,7 @@ namespace BeaversHockeyPortal.Controllers.Api
             }
             else
             {
-                return this._languageParser.ParseForManager(emailTemplate.To, emailTemplate.Context, emailTemplate.Manager.Id);
+                return this._languageParser.ParseForManager(emailTemplate.To, emailTemplate.Context, emailTemplate.Manager.Id, emailTemplate.AggrigateLanguageResults);
             }
 
         }

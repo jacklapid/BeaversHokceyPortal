@@ -59,9 +59,10 @@ namespace DataModel.Repositories
 
         Dictionary<int, bool> GetPlayerGameConfirmationStatuses(int playerId, IEnumerable<int> gameIds);
 
-        bool CreateEmailTemplateToPredefiniedUsers(int[] toUserIds, int[] toPlayerStatusIds, int[] toUserTypeIds, string from, string subject, string body, string context, int managerId);
+        bool CreateEmailTemplateToPredefiniedUsers(int[] toUserIds, int[] toPlayerStatusIds, int[] toUserTypeIds, string from, string subject, string body, 
+            string context, int managerId, bool aggrigateLanguageResults);
 
-        bool CreateEmailTemplate(string to, string from, string subject, string body, string context, int managerId);
+        bool CreateEmailTemplate(string to, string from, string subject, string body, string context, int managerId, bool aggrigateLanguageResults);
         bool GetPlayerGameConfirmationStatus(int playerId, int gameId);
 
         IQueryable<EmailTemplate> GetEmailTemplatesForManager(int managerId);

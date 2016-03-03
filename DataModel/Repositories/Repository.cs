@@ -235,7 +235,8 @@ namespace DataModel.Repositories
             return _ctx.EmailTemplates.Where(et => et.Manager.Id == managerId);
         }
 
-        public bool CreateEmailTemplateToPredefiniedUsers(int[] toUserIds, int[] toPlayerStatusIds, int[] toUserTypeIds, string from, string subject, string body, string context, int managerId)
+        public bool CreateEmailTemplateToPredefiniedUsers(int[] toUserIds, int[] toPlayerStatusIds, int[] toUserTypeIds, string from, string subject, string body, 
+            string context, int managerId, bool aggrigateLanguageResults)
         {
             var emailTemplate = new EmailTemplate
             {
@@ -246,7 +247,8 @@ namespace DataModel.Repositories
                 Subject = subject,
                 Body = body,
                 Context = context,
-                Manager = this.GetManagerById(managerId)
+                AggrigateLanguageResults = aggrigateLanguageResults,
+                Manager = this.GetManagerById(managerId),
             };
 
             _ctx.EmailTemplates.Add(emailTemplate);
@@ -257,7 +259,7 @@ namespace DataModel.Repositories
         }
 
 
-        public bool CreateEmailTemplate(string to, string from, string subject, string body, string context, int managerId)
+        public bool CreateEmailTemplate(string to, string from, string subject, string body, string context, int managerId, bool aggrigateLanguageResults)
         {
             var emailTemplate = new EmailTemplate
             {
@@ -266,6 +268,7 @@ namespace DataModel.Repositories
                 Subject = subject,
                 Body = body,
                 Context = context,
+                AggrigateLanguageResults = aggrigateLanguageResults,
                 Manager = this.GetManagerById(managerId)
             };
 

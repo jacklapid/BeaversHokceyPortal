@@ -1,2 +1,2 @@
-2016-02-21 1:13:32 PM: INFO
-Application Start
+2016-03-02 10:40:04 PM: INFO
+Successfully sent email to: woofer20@hotmail.com

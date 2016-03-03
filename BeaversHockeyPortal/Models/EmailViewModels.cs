@@ -63,8 +63,12 @@ namespace BeaversHockeyPortal.Models
         [Display(Name = "Subject")]
         public string Subject { get; set; }
 
+        [AllowHtml]
         [Display(Name = "Body")]
         public string Body { get; set; }
+
+        [Display(Name = "Aggrigate Language Results", Description = "If there is formula that produces multiples")]
+        public bool AggrigateLanguageResults { get; set; }
 
         [Display(Name = "Users")]
         public int[] ToUserIds { get; set; }
