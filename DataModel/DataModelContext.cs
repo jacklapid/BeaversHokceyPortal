@@ -104,7 +104,7 @@ namespace DataModel
 
         public DbSet<EmailTemplate> EmailTemplates { get; set; }
 
-        public DbSet<GameEmailEvent> EmailEvents { get; set; }
+        public DbSet<EmailEvent> EmailEvents { get; set; }
 
         public DbSet<EmailEventType> EmailEventTypes { get; set; }
 

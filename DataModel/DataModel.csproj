@@ -63,6 +63,7 @@
     <Compile Include="DataModelContext.cs" />
     <Compile Include="DataModelMigrationConfiguration.cs" />
     <Compile Include="EmailEvent.cs" />
+    <Compile Include="GameEmailEvent.cs" />
     <Compile Include="EmailEventType.cs" />
     <Compile Include="EmailLog.cs" />
     <Compile Include="EmailTemplate.cs" />

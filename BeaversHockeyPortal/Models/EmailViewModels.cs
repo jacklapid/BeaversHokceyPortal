@@ -14,10 +14,15 @@ namespace BeaversHockeyPortal.Models
         Text
     }
 
+    public enum EmailEventType
+    {
+        Game = 1,
+        Other
+    }
+
     public class EmailEventViewModel
     {
         [Display(Name = "Email Events")]
-        [Required]
         public int[] EventTypes{ get; set; }
         public IEnumerable<SelectListItem> AvailableEventTypes { get; set; }
 
@@ -25,7 +30,6 @@ namespace BeaversHockeyPortal.Models
         public string EventTypesString { get; set; }
 
         [Display(Name = "Number of days before the game")]
-        [Required]
         public int DaysBeforeGame { get; set; }
 
         [Display (Name = "Repeat every N-days")]
@@ -46,6 +50,9 @@ namespace BeaversHockeyPortal.Models
         [Required]
         public int ManagerId { get; set; }
         public List<SelectListItem> AvailableManagers { get; set; }
+
+        [Display(Name = "Email Event Type")]
+        public EmailEventType EmailEventType { get; set; }
 
     }
 

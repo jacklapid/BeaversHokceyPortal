@@ -32,5 +32,9 @@ namespace DataModel.Enums
 
         [Description("Player Unconfirmed")]
         PlayerUnConfirmed,
+
+        [Description("Other")]
+        Other,
+
     }
 }

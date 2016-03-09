@@ -12,7 +12,7 @@ namespace DataModel
 
         public Game Game { get; set; }
 
-        public GameEmailEvent EmailEvent { get; set; }
+        public EmailEvent EmailEvent { get; set; }
 
         public DateTime TimeStamp { get; set; }
 

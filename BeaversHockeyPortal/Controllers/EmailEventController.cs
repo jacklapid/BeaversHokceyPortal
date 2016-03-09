@@ -8,6 +8,7 @@ using DataModel;
 using BeaversHockeyPortal.Models;
 using BeaversHockeyPortal.WebUtilities;
 using System.Data.Entity;
+using DataModel.Enums;
 
 namespace BeaversHockeyPortal.Controllers
 {
@@ -42,14 +43,19 @@ namespace BeaversHockeyPortal.Controllers
                 .Distinct()
                 .ToList();
 
-            var model = emailEvents.Select(ee => new EmailEventViewModel
-            {
-                DaysBeforeGame = ee.DaysBeforeGame,
-                ReoccurrenceDays = ee.DaysForReoccurrence, //.HasValue ? ee.DaysForReoccurrence.ToString() : string.Empty,
-                ManagerName = ee.Manager.FullName,
-                EventTypesString = string.Join(",", ee.EmailEventTypes.Select(eet => eet.Name)),
-                EmailTemplatesString = string.Join(",", ee.EmailTemplates.Select(eet => eet.Subject)),
-            })
+            var model =
+                (from ee in emailEvents
+                 let gameEE = ee as GameEmailEvent
+                 select
+                 new EmailEventViewModel
+                 {
+                     DaysBeforeGame = gameEE != null ? gameEE.DaysBeforeGame : 0,
+                     ReoccurrenceDays = gameEE != null ? gameEE.DaysForReoccurrence : null, //.HasValue ? ee.DaysForReoccurrence.ToString() : string.Empty,
+                     ManagerName = ee.Manager.FullName,
+                     EventTypesString = gameEE != null ? string.Join(",", ee.EmailEventTypes.Select(eet => eet.Name)) : "N/A",
+                     EmailTemplatesString = string.Join(",", ee.EmailTemplates.Select(eet => eet.Subject)),
+                     EmailEventType = gameEE != null ? Models.EmailEventType.Game : Models.EmailEventType.Other
+                 })
             .ToList();
 
             return View(model);
@@ -71,14 +77,35 @@ namespace BeaversHockeyPortal.Controllers
             {
                 try
                 {
-                    _ctx.EmailEvents.Add(new GameEmailEvent
+                    if (model.EmailEventType == Models.EmailEventType.Game)
                     {
-                        DaysBeforeGame = model.DaysBeforeGame,
-                        DaysForReoccurrence = model.ReoccurrenceDays,
-                        Manager = _ctx.Persons.FirstOrDefault(p => p.Id == model.ManagerId) as Manager,
-                        EmailEventTypes = _ctx.EmailEventTypes.Where(eet => model.EventTypes.Contains(eet.Id)).ToList(),
-                        EmailTemplates = _ctx.EmailTemplates.Where(eet => model.EmailTemplates.Contains(eet.Id)).ToList(),
-                    });
+                        if (model.EventTypes.Any())
+                        {
+                            _ctx.EmailEvents.Add(new GameEmailEvent
+                            {
+                                DaysBeforeGame = model.DaysBeforeGame,
+                                DaysForReoccurrence = model.ReoccurrenceDays,
+                                Manager = _ctx.Persons.FirstOrDefault(p => p.Id == model.ManagerId) as Manager,
+                                EmailEventTypes = _ctx.EmailEventTypes.Where(eet => model.EventTypes.Contains(eet.Id)).ToList(),
+                                EmailTemplates = _ctx.EmailTemplates.Where(eet => model.EmailTemplates.Contains(eet.Id)).ToList(),
+                            });
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("", "Error saving email event: Event TYPE is not provided");
+                        }
+                    }
+                    else if (model.EmailEventType == Models.EmailEventType.Other)
+                    {
+                        var emailEventType = (int)EmailEventTypeEnum.Other;
+
+                        _ctx.EmailEvents.Add(new EmailEvent
+                        {
+                            Manager = _ctx.Persons.FirstOrDefault(p => p.Id == model.ManagerId) as Manager,
+                            EmailEventTypes = _ctx.EmailEventTypes.Where(eet => eet.Id == emailEventType).ToList(),
+                            EmailTemplates = _ctx.EmailTemplates.Where(eet => model.EmailTemplates.Contains(eet.Id)).ToList(),
+                        });
+                    }
 
                     _ctx.SaveChanges();
 
@@ -110,6 +137,8 @@ namespace BeaversHockeyPortal.Controllers
                 .ToSelectListItems();
 
             model.AvailableEventTypes = System.Web.Mvc.Html.EnumHelper.GetSelectList(typeof(DataModel.Enums.EmailEventTypeEnum));
+
+            model.EmailEventType = Models.EmailEventType.Game;
         }
     }
 }

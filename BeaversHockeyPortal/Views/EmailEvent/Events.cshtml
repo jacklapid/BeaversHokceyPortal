@@ -29,29 +29,52 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.EventTypesString)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DaysBeforeGame)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ReoccurrenceDays)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EmailTemplatesString)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ManagerName)
-        </td>
-        <td>
-            @*@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @if (item.EmailEventType == BeaversHockeyPortal.Models.EmailEventType.Game)
+                {
+                    @Html.DisplayFor(modelItem => item.EventTypesString);
+                }
+                else
+                {
+                    @Html.Raw("N/A");
+                }
+            </td>
+
+            <td>
+                @if (item.EmailEventType == BeaversHockeyPortal.Models.EmailEventType.Game)
+                {
+                    @Html.DisplayFor(modelItem => item.DaysBeforeGame.ToString())
+                }
+                else
+                {
+                    @Html.Raw("N/A");
+                }
+            </td>
+            <td>
+                @if (item.EmailEventType == BeaversHockeyPortal.Models.EmailEventType.Game)
+                {
+                    @Html.DisplayFor(modelItem => item.ReoccurrenceDays.ToString())
+                }
+                else
+                {
+                    @Html.Raw("N/A");
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmailTemplatesString)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ManagerName)
+            </td>
+            <td>
+                @*@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
+            </td>
+        </tr>
+    }
 
 </table>

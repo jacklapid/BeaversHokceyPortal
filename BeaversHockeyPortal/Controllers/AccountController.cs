@@ -452,6 +452,8 @@ namespace BeaversHockeyPortal.Controllers
                 @ViewData["Message"] = $"Successully created user for Email: {model.Email}";
             }
 
+            ViewData["CanRegister"] = canRegister;
+
             this.PopulateOptionsForLoggedUser(model);
             return View(model);
         }

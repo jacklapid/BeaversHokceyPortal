@@ -28,18 +28,18 @@ namespace BeaversHockeyPortal.Controllers.Api
         private class EmailLogEntry
         {
             public int Id { get; set; }
-            public int DaysBeforeGame { get; set; }
-            public int Reoccurrence { get; set; }
+            public int? DaysBeforeGame { get; set; }
+            public int? Reoccurrence { get; set; }
 
             public string To { get; set; }
             public string Subject { get; set; }
             public string Body { get; set; }
 
-            public string EmailEvent { get; set; }
+            public string EmailEventType { get; set; }
 
-            public DateTime GameDate { get; set; }
+            public DateTime Date { get; set; }
 
-            public string GameName { get; set; }
+            public string Name { get; set; }
             public string Message { get; set; }
 
             public string EmailSendingStatus { get; set; }
@@ -54,9 +54,9 @@ namespace BeaversHockeyPortal.Controllers.Api
                     To = this.To,
                     Subject = this.Subject,
                     Body = this.Body,
-                    EmailEvent = this.EmailEvent,
-                    GameDate = this.GameDate,
-                    GameName = this.GameName,
+                    EmailEventType = this.EmailEventType,
+                    Date = this.Date,
+                    Name = this.Name,
                     Message = this.Message,
                 };
             }
@@ -121,6 +121,7 @@ namespace BeaversHockeyPortal.Controllers.Api
                 this._ctx.EmailEvents
     .Include(e => e.EmailTemplates)
     .Include(e => e.EmailEventTypes)
+    .Include(e => e.Manager)
     .ToList()
     .ForEach(emailEvent => this.ProcessEmailEvent(emailEvent));
 
@@ -134,7 +135,61 @@ namespace BeaversHockeyPortal.Controllers.Api
 
         }
 
-        private void ProcessEmailEvent(GameEmailEvent emailEvent)
+        private void ProcessEmailEvent(EmailEvent emailEvent)
+        {
+            var gameEmailEvent = emailEvent as GameEmailEvent;
+
+            if (gameEmailEvent != null)
+            {
+                this.ProcessGameEmailEvent(gameEmailEvent);
+            }
+            else
+            {
+                this.ProcessGenericEmailEvent(emailEvent);
+            }
+        }
+
+        private void ProcessGenericEmailEvent(EmailEvent emailEvent)
+        {
+            var emailEventTypeName = "Other";
+
+            var emailLogEntry = new EmailLogEntry
+            {
+                Id = emailEvent.Id,
+                DaysBeforeGame = null,
+                Reoccurrence = null,
+                EmailEventType = emailEventTypeName,
+            };
+
+            try
+            {
+                // Proceed only if email not sent, or it's a reccurring email
+                var emailLog = this._ctx.EmailLogs.FirstOrDefault(el => el.EmailEvent.Id == emailEvent.Id && el.Successful && el.TimeStamp <= this.Today);
+
+                if (emailLog == null)
+                {
+                    // Process each email template for the Email Event
+                    SendAndSaveEmails(emailEvent, emailLogEntry);
+
+                    this._ctx.SaveChanges();
+                }
+                else
+                {
+                    emailLogEntry.EmailSendingStatus = EmailSendingStatus.AlreadySent.ToString();
+                    this._status.Add(emailLogEntry);
+                }
+            }
+            catch (Exception ex)
+            {
+                emailLogEntry.EmailSendingStatus = EmailSendingStatus.Failed.ToString();
+                emailLogEntry.Message = ex.Message;
+                this._status.Add(emailLogEntry);
+
+                LoggingModule.Logger.Instance.LogError($"Error sending email for email event: {emailEvent.Id}, event type: {emailEventTypeName}", ex);
+            }
+        }
+
+        private void ProcessGameEmailEvent(GameEmailEvent emailEvent)
         {
             var dateBeforeGame = this.Today.AddDays(emailEvent.DaysBeforeGame);
 
@@ -144,8 +199,8 @@ namespace BeaversHockeyPortal.Controllers.Api
                 {
                     Id = emailEvent.Id,
                     DaysBeforeGame = emailEvent.DaysBeforeGame,
-                    Reoccurrence = emailEvent.DaysForReoccurrence ?? 0,
-                    EmailEvent = emailEventType.Name,
+                    Reoccurrence = emailEvent.DaysForReoccurrence,
+                    EmailEventType = emailEventType.Name,
                 };
 
                 try
@@ -165,8 +220,8 @@ namespace BeaversHockeyPortal.Controllers.Api
                         continue;
                     }
 
-                    emailLogEntry.GameDate = game.Date;
-                    emailLogEntry.GameName = game.ToString();
+                    emailLogEntry.Date = game.Date;
+                    emailLogEntry.Name = game.ToString();
 
                     // Proceed only if email not sent, or it's a reccurring email
                     var emailLog = this._ctx.EmailLogs.FirstOrDefault(el => el.Game != null &&
@@ -195,27 +250,7 @@ namespace BeaversHockeyPortal.Controllers.Api
                     }
 
                     // Process each email template for the Email Event
-                    foreach (var emailTemplate in emailEvent.EmailTemplates)
-                    {
-                        bool sendingEmailSucceeded = this.SendEmailsForTemplate(emailTemplate, emailEvent.Id);
-
-                        var emailTemplateLogEntry = emailLogEntry.Clone();
-
-                        emailTemplateLogEntry.EmailSendingStatus = sendingEmailSucceeded ? EmailSendingStatus.Successful.ToString() : EmailSendingStatus.Failed.ToString();
-                        emailTemplateLogEntry.To = emailTemplate.To;
-                        emailTemplateLogEntry.Subject = emailTemplate.Subject;
-                        emailTemplateLogEntry.Body = emailTemplate.Body;
-                        this._status.Add(emailTemplateLogEntry);
-
-                        // Log email entry
-                        this._ctx.EmailLogs.Add(new EmailLog
-                        {
-                            EmailEvent = emailEvent,
-                            Game = game,
-                            Successful = sendingEmailSucceeded,
-                            TimeStamp = this.Today,
-                        });
-                    }
+                    SendAndSaveEmails(emailEvent, emailLogEntry, game);
 
                     this._ctx.SaveChanges();
                 }
@@ -227,6 +262,31 @@ namespace BeaversHockeyPortal.Controllers.Api
 
                     LoggingModule.Logger.Instance.LogError($"Error sending email for email event: {emailEvent.Id}, event type: {emailEventType.Name}", ex);
                 }
+            }
+        }
+
+        private void SendAndSaveEmails(EmailEvent emailEvent, EmailLogEntry emailLogEntry, Game game = null)
+        {
+            foreach (var emailTemplate in emailEvent.EmailTemplates)
+            {
+                bool sendingEmailSucceeded = this.SendEmailsForTemplate(emailTemplate, emailEvent.Id);
+
+                var emailTemplateLogEntry = emailLogEntry.Clone();
+
+                emailTemplateLogEntry.EmailSendingStatus = sendingEmailSucceeded ? EmailSendingStatus.Successful.ToString() : EmailSendingStatus.Failed.ToString();
+                emailTemplateLogEntry.To = emailTemplate.To;
+                emailTemplateLogEntry.Subject = emailTemplate.Subject;
+                emailTemplateLogEntry.Body = emailTemplate.Body;
+                this._status.Add(emailTemplateLogEntry);
+
+                // Log email entry
+                this._ctx.EmailLogs.Add(new EmailLog
+                {
+                    EmailEvent = emailEvent,
+                    Game = game,
+                    Successful = sendingEmailSucceeded,
+                    TimeStamp = this.Today,
+                });
             }
         }
 
