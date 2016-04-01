@@ -1,9 +1,13 @@
 ﻿@model BeaversHockeyPortal.Models.RegisterViewModel
 @{
     ViewBag.Title = "Register";
-}
 
-<h2>@ViewBag.Title.</h2>
+    ViewBag.PageHeader = "Register New User";
+    ViewBag.PageHeaderDescription = "Here, register new Player for your team. Assign the position, status, etc... ";
+    ViewBag.BreadCrumbs = new List<BeaversHockeyPortal.Models.BreadcrumbsDescription> {
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Register New User", IsActive = true },
+    };
+}
 
 @using (Html.BeginForm("Register", "Account", new { token = Request.QueryString["token"] }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {

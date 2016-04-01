@@ -2,84 +2,85 @@
 
 @{
     ViewBag.Title = "Create";
+
+    ViewBag.PageHeader = "Create new Email Event";
+    ViewBag.PageHeaderDescription = "An Email Event is a trigger for email sending";
+
+    ViewBag.BreadCrumbs = new List<BeaversHockeyPortal.Models.BreadcrumbsDescription> {
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Manager Portal" },
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = "/EmailEvent/Events", Name = "Email Events" },
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Create Email Event", IsActive = true },
+    };
 }
 
-<h2>Create Email Event</h2>
+<div class="col-md-6">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
 
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @if (ViewData["Message"] != null)
-        {
-            <div class="row text-success" style="margin-bottom:10px">@ViewData["Message"]</div>
-        }
-
-        <div class="form-group checkbox-inline">
-            @Html.Label("Email Event Type: ")
-
-            @foreach (var value in Enum.GetValues(typeof(BeaversHockeyPortal.Models.EmailEventType)))
+        <div class="">
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @if (ViewData["Message"] != null)
             {
-                @Html.RadioButtonFor(model => model.EmailEventType, value, htmlAttributes: new { @class = "emailEventSelectionRadio" })
-                @Html.Label(value.ToString())
+                <div class="row text-success" style="margin-bottom:10px">@ViewData["Message"]</div>
             }
-        </div>
 
-        <div class="form-group game-email-event">
-            @Html.LabelFor(model => model.DaysBeforeGame, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.DaysBeforeGame, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DaysBeforeGame, "", new { @class = "text-danger" })
+            <div class="panel panel-default">
+                <div class="panel-heading form-group ">
+                    <div>
+                        @Html.Label("Email Event Type: ")
+                    </div>
+                    <div style="padding-left:25px">
+                        @foreach (var value in Enum.GetValues(typeof(BeaversHockeyPortal.Models.EmailEventType)))
+                        {
+                            @Html.RadioButtonFor(model => model.EmailEventType, value, htmlAttributes: new { @class = "emailEventSelectionRadio" })
+                            @Html.Label(value.ToString())
+                            <br />
+                        }
+                    </div>
+                </div>
+
+                <div class="panel-body form-group game-email-event">
+                    @Html.LabelFor(model => model.DaysBeforeGame, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.DaysBeforeGame, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.DaysBeforeGame, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="panel-body form-group  game-email-event">
+                    @Html.LabelFor(model => model.ReoccurrenceDays, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.ReoccurrenceDays, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ReoccurrenceDays, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="panel-body form-group  game-email-event">
+                    @Html.LabelFor(model => model.EventTypes, htmlAttributes: new { @class = "control-label" })
+                    @Html.ListBoxFor(model => model.EventTypes, Model.AvailableEventTypes, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.EventTypes, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group  game-email-event">
-            @Html.LabelFor(model => model.ReoccurrenceDays, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ReoccurrenceDays, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ReoccurrenceDays, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group  game-email-event">
-            @Html.LabelFor(model => model.EventTypes, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.ListBoxFor(model => model.EventTypes, Model.AvailableEventTypes, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.EventTypes, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group ">
-            @Html.LabelFor(model => model.EmailTemplates, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            <div class="form-group ">
+                @Html.LabelFor(model => model.EmailTemplates, htmlAttributes: new { @class = "control-label" })
                 @Html.ListBoxFor(model => model.EmailTemplates, Model.AvailableEmailTemplates, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.EmailTemplates, "", new { @class = "text-danger" })
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.ManagerId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            <div class="form-group">
+                @Html.LabelFor(model => model.ManagerId, htmlAttributes: new { @class = "control-label" })
                 @Html.DropDownListFor(model => model.ManagerId, Model.AvailableManagers, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ManagerId, "", new { @class = "text-danger" })
             </div>
-        </div>
 
-
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default btn-lg" />
             </div>
         </div>
-    </div>
-}
+    }
 
-<div>
-    @Html.ActionLink("Back to List", "Events")
+    <div>
+        @Html.ActionLink("Back to List", "Events")
+    </div>
 </div>
 
 @section Scripts {
@@ -97,8 +98,7 @@
             toggleToSelection(value);
         });
 
-        toggleToSelection = function(selectionValue)
-        {
+        toggleToSelection = function (selectionValue) {
             if (selectionValue == '@BeaversHockeyPortal.Models.EmailEventType.Game') {
                 $('.game-email-event').show();
             }

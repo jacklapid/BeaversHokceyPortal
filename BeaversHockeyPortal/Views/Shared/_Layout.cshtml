@@ -9,15 +9,26 @@
 
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
+
+
+    <header class="container">
+        <div class="navbar navbar-default navbar-fixed-top">
+            <div class="navbar-header">
+                <button class="btn btn-success navbar-toggle"
+                        data-toggle="collapse"
+                        data-target=".navbar-collapse">
+                    <span class="glyphicon glyphicon-chevron-down">
+                    </span>
+                </button>
+            </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li class="nav">@Html.ActionLink("Home", "Index", "Home")</li>
+
                     @if (this.User.Identity.IsAuthenticated)
                     {
-                        <li class="dropdown-submenu">
-                            <a tabindex="-1" href="#">Player Portal ...</a>
+                        <li class="nav">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Player Portal <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li>
                                     @Html.ActionLink("Players", "Players", "Player")
@@ -30,9 +41,8 @@
                     }
                     @if (this.User.IsInRole(Utilities.Constants.MANAGER_ROLE))
                     {
-                        <li class="dropdown-submenu">
-                            <a tabindex="-1" href="#">Manager Portal ...</a>
-
+                        <li class="nav">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manager Portal <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li>
                                     @Html.ActionLink("Teams", "Teams", "Team")
@@ -40,16 +50,11 @@
                                 <li>
                                     @Html.ActionLink("Games", "Games", "Game")
                                 </li>
-                                <li class="dropdown-submenu">
-                                    <a tabindex="-1" href="#">Emails ...</a>
-                                    <ul class="dropdown-submenu">
-                                        <li>
-                                            @Html.ActionLink("Templates", "Templates", "Email")
-                                        </li>
-                                        <li>
-                                            @Html.ActionLink("Events", "Events", "EmailEvent")
-                                        </li>
-                                    </ul>
+                                <li>
+                                    @Html.ActionLink("Email Templates", "Templates", "Email")
+                                </li>
+                                <li>
+                                    @Html.ActionLink("Email Events", "Events", "EmailEvent")
                                 </li>
                             </ul>
                         </li>
@@ -58,18 +63,56 @@
                 @Html.Partial("_LoginPartial")
             </div>
         </div>
-    </div>
+    </header>
+
+
     <div class="container body-content">
+        <ol class="breadcrumb">
+            <li><a href="/">Home</a></li>
+            @if (ViewBag.BreadCrumbs != null)
+            {
+                foreach (BeaversHockeyPortal.Models.BreadcrumbsDescription item in ViewBag.BreadCrumbs)
+                {
+                    var liClass = item.IsActive ? "active" : string.Empty;
+
+                    <li class="@liClass">
+                        @if (string.IsNullOrWhiteSpace(item.Href))
+                        {
+                            @item.Name;
+                        }
+                        else
+                        {
+                            <a href="@item.Href">@item.Name</a>
+                        }
+                    </li>
+                }
+            }
+        </ol>
+
+        <div class="page-header">
+            @if (@ViewBag.PageHeader != null)
+            {
+                <h1>@ViewBag.PageHeader</h1>
+            }
+            @if (@ViewBag.PageHeaderDescription != null)
+            {
+                <p class="text-warning">@ViewBag.PageHeaderDescription</p>
+            }
+        </div>
+
         @RenderBody()
         <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Beavers Hockey Portal</p>
-        </footer>
     </div>
+    <footer class="container">
+        <div class="navbar navbar-default navbar-fixed-bottom">
+            <p class="panel-footer">&copy; @DateTime.Now.Year - Beavers Hockey Portal</p>
+        </div>
+    </footer>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 
 </body>
+
 </html>

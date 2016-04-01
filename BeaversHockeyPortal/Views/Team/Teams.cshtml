@@ -1,6 +1,14 @@
 ﻿@model BeaversHockeyPortal.Models.TeamViewModel
 @{
     ViewBag.Title = "Teams";
+
+    ViewBag.PageHeader = "Team Management";
+    ViewBag.PageHeaderDescription = "Here Create new Teams and View existing Teams";
+
+    ViewBag.BreadCrumbs = new List<BeaversHockeyPortal.Models.BreadcrumbsDescription> {
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Manager Portal" },
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Teams", IsActive = true },
+    };
 }
 
 <div class="form-group">

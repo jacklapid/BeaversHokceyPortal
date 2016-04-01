@@ -4,25 +4,23 @@
     ViewBag.Title = "Teams";
 }
 
-<h1>Teams</h1>
+<div class="row text-primary text-center">
+    <h1>Teams</h1>
+</div>
 
 @foreach (var team in Model)
 {
-    <div class="row list-group-item">
-        <div class="list-group-item-heading">@team.Name</div>
-        <div class="col-md-4">
+    <div class="row panel panel-default">
+        <div class="panel-heading">@team.Name</div>
+        <div class="panel-body text-center img-thumbnail">
             @{string url = "/Images/defaultTeam.png";            }
 
             @if (!string.IsNullOrEmpty(@team.ImageUrl))
-            {
-                url = @team.ImageUrl;
-            }
-            <img src=@url class="img-thumbnail" />
-
+                {
+                    url = @team.ImageUrl;
+                }
+            <img src=@url />
         </div>
-        <div class="col-md-8 list-group-item-text">
-            <div class="col-md-8">Team Name: @team.Name</div>
-            <div class="col-md-8">Manager: @team.ManagerFullName</div>
-        </div>
+        <div class="panel-footer">Manager: @team.ManagerFullName</div>
     </div>
                 }

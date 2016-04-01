@@ -2,79 +2,89 @@
 
 @{
     ViewBag.Title = "Email Events";
-}
 
-<h2>Events</h2>
+    ViewBag.PageHeader = "Email Events Management";
+    ViewBag.PageHeaderDescription = "Here Create new Email Events and View existing ones";
+
+    ViewBag.BreadCrumbs = new List<BeaversHockeyPortal.Models.BreadcrumbsDescription> {
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Manager Portal" },
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Email Events", IsActive = true },
+    };
+}
 
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.EventTypesString)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DaysBeforeGame)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ReoccurrenceDays)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.EmailTemplatesString)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ManagerName)
-        </th>
-        <th></th>
-    </tr>
 
-    @foreach (var item in Model)
-    {
+
+<div class="row table-responsive">
+    <table class="table table-striped table-hover table-condensed">
         <tr>
-            <td>
-                @if (item.EmailEventType == BeaversHockeyPortal.Models.EmailEventType.Game)
-                {
-                    @Html.DisplayFor(modelItem => item.EventTypesString);
-                }
-                else
-                {
-                    @Html.Raw("N/A");
-                }
-            </td>
-
-            <td>
-                @if (item.EmailEventType == BeaversHockeyPortal.Models.EmailEventType.Game)
-                {
-                    @Html.DisplayFor(modelItem => item.DaysBeforeGame.ToString())
-                }
-                else
-                {
-                    @Html.Raw("N/A");
-                }
-            </td>
-            <td>
-                @if (item.EmailEventType == BeaversHockeyPortal.Models.EmailEventType.Game)
-                {
-                    @Html.DisplayFor(modelItem => item.ReoccurrenceDays.ToString())
-                }
-                else
-                {
-                    @Html.Raw("N/A");
-                }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EmailTemplatesString)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ManagerName)
-            </td>
-            <td>
-                @*@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
-            </td>
+            <th>
+                @Html.DisplayNameFor(model => model.EventTypesString)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DaysBeforeGame)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReoccurrenceDays)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmailTemplatesString)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ManagerName)
+            </th>
+            <th></th>
         </tr>
-    }
 
-</table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (item.EmailEventType == BeaversHockeyPortal.Models.EmailEventType.Game)
+                {
+                        @Html.DisplayFor(modelItem => item.EventTypesString);
+                }
+                else
+                {
+                        @Html.Raw("N/A");
+                }
+                </td>
+
+                <td>
+                    @if (item.EmailEventType == BeaversHockeyPortal.Models.EmailEventType.Game)
+                {
+                        @Html.DisplayFor(modelItem => item.DaysBeforeGame)
+                    }
+                    else
+                    {
+                        @Html.Raw("N/A");
+                }
+                </td>
+                <td>
+                    @if (item.EmailEventType == BeaversHockeyPortal.Models.EmailEventType.Game)
+                {
+                        @Html.DisplayFor(modelItem => item.ReoccurrenceDays)
+                    }
+                    else
+                    {
+                        @Html.Raw("N/A");
+                }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmailTemplatesString)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ManagerName)
+                </td>
+                <td>
+                    @*@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>

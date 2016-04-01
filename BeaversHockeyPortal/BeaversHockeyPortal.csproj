@@ -225,6 +225,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\BreadcrumbsDescription.cs" />
     <Compile Include="Models\EmailViewModels.cs" />
     <Compile Include="Models\GameViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -245,6 +246,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\Beavers.PNG" />
     <Content Include="Images\defaultTeam.png" />
     <Content Include="Images\goalie.png" />
     <Content Include="Images\player.jpg" />

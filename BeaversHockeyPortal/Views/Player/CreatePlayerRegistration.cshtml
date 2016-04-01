@@ -2,9 +2,16 @@
 
 @{
     ViewBag.Title = "Create Player Registration";
-}
 
-<h2>Create Player Registration</h2>
+    ViewBag.PageHeader = "Manage new Player's Registration";
+    ViewBag.PageHeaderDescription = "Here you can create a registration process for a new player";
+
+    ViewBag.BreadCrumbs = new List<BeaversHockeyPortal.Models.BreadcrumbsDescription> {
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Player Portal" },
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = "/Player/Players", Name = "Players" },
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Create Player Registration", IsActive = true },
+    };
+}
 
 @using (Html.BeginForm()) 
 {

@@ -1,46 +1,118 @@
 ﻿@model IEnumerable<BeaversHockeyPortal.Models.PlayerViewModels>
 @{
     ViewBag.Title = "Players";
+    ViewBag.PageHeader = "Players";
+    ViewBag.PageHeaderDescription = "View players details";
+    ViewBag.BreadCrumbs = new List<BeaversHockeyPortal.Models.BreadcrumbsDescription> {
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Player Portal" },
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Players", IsActive = true },
+    };
 }
 
-<h2>Players</h2>
+
 
 @if (this.User.IsInRole(Utilities.Constants.MANAGER_ROLE) || this.User.IsInRole(Utilities.Constants.ADMIN_ROLE))
 {
-    <p>
-        @Html.ActionLink("Create New Player Registration", "CreatePlayerRegistration")
-    </p>
+    <div class="panel panel-default">
+        <div class=" panel-heading">
+            @Html.ActionLink("Create New Player Registration", "CreatePlayerRegistration")
+        </div>
+    </div>
 }
 
 @foreach (var player in Model)
 {
-    <div class="row">
-        <div class="panel-title">             @player.FullName</div>
-        <div class="col-md-4">
-            @if (player.PositionId == (int)DataModel.Enums.PlayerPositionEnum.Goalie)
+    <div class="row panel panel-default" style="margin-top:25px">
+        <div class="panel-heading">@player.FullName</div>
+        <div class="panel-body">
+            <div class="col-md-4 col-sm-4 col-xs-12 img-responsive text-center">
+                @if (player.PositionId == (int)DataModel.Enums.PlayerPositionEnum.Goalie)
                 {
-                <img src="~/Images/goalie.png" class="img-thumbnail" />
-            }
-            else
-            {
-                <img src="~/Images/player.jpg" class="img-thumbnail" />
-            }
-        </div>
-        <div class="col-md-8">
-            @if (this.User.IsInRole(Utilities.Constants.MANAGER_ROLE) || this.User.IsInRole(Utilities.Constants.ADMIN_ROLE))
-            {
-                <div style="margin-bottom: 5px;">
-                    <div class="col-md-8 text-primary">USERNAME: @player.Username</div>
-                    <div class="col-md-8 text-primary">EMAIL: @player.Email</div>
-                    <br />
-                    <div class="col-md-8">Status: @player.Status</div>
+                    <img src="~/Images/goalie.png" class="img-thumbnail" />
+                }
+                else
+                {
+                    <img src="~/Images/player.jpg" class="img-thumbnail" />
+                }
+            </div>
+            <div class="col-md-8 col-sm-8 col-xs-12">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-condensed">
+                        @if (this.User.IsInRole(Utilities.Constants.MANAGER_ROLE) || this.User.IsInRole(Utilities.Constants.ADMIN_ROLE))
+                        {
+                            <tr>
+                                <td class="text-primary">
+                                    USERNAME
+                                </td>
+                                <td>
+                                    @player.Username
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-primary">
+                                    EMAIL
+                                </td>
+                                <td>
+                                    @player.Email
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Status
+                                </td>
+                                <td>
+                                    @player.Status
+                                </td>
+                            </tr>
+                        }
+                        <tr>
+                            <td>
+                                First Name
+                            </td>
+                            <td>
+                                @player.FirstName
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Last Name
+                            </td>
+                            <td>
+                                @player.LastName
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Position
+                            </td>
+                            <td>
+                                @player.Position
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Manager
+                            </td>
+                            <td>
+                                @player.Manageer
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                Team
+                            </td>
+                            <td>
+                                @player.Team
+                            </td>
+                        </tr>
+
+                    </table>
                 </div>
-            }
-            <div class="col-md-8">First Name: @player.FirstName</div>
-            <div class="col-md-8">Last Name: @player.LastName</div>
-            <div class="col-md-8">Position: @player.Position</div>
-            <div class="col-md-8">Manager: @player.Manageer</div>
-            <div class="col-md-8">Team: @player.Team</div>
+            </div>
         </div>
     </div>
 }

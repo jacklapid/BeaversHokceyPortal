@@ -2,68 +2,81 @@
 
 @{
     ViewBag.Title = "Confirm Game";
+
+    ViewBag.PageHeader = "Confirm (or Un-Confirm) game presence";
+    ViewBag.PageHeaderDescription = "Here a player would confirm or un-confirm his or her presence for the games that are \"Open\"";
+
+    ViewBag.BreadCrumbs = new List<BeaversHockeyPortal.Models.BreadcrumbsDescription> {
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Player Portal" },
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Confrim Game", IsActive = true },
+    };
 }
 
-<h2>Confirm Game</h2>
+<div class="page-header">
+    <h1></h1>
+    <p class="text-warning"></p>
+</div>
 
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Time)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Arena)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TheirTeam)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Manager)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsConfirmedString)
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
+<div class="row table-responsive">
+    <table class="table table-striped table-hover table-condensed">
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Time)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Arena)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TheirTeam)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Manager)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsConfirmedString)
-            </td>
-            @if (item.IsConfirmed.HasValue)
-            {
-                <td>
-                    @if (item.IsConfirmed.Value)
-                    {
-                        @Html.ActionLink("Unconfirm Game", "ConfirmGame", new { id = item.Id, confirming = false })
-                    }
-                    else
-                    {
-                        @Html.ActionLink("Confirm Game", "ConfirmGame", new { id = item.Id, confirming = true })
-                    }
-                </td>
-            }
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Time)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Arena)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TheirTeam)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Manager)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsConfirmedString)
+            </th>
+            <th></th>
         </tr>
-    }
 
-</table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Time)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Arena)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TheirTeam)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Manager)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsConfirmedString)
+                </td>
+                @if (item.IsConfirmed.HasValue)
+                {
+                    <td>
+                        @if (item.IsConfirmed.Value)
+                    {
+                            @Html.ActionLink("Unconfirm Game", "ConfirmGame", new { id = item.Id, confirming = false })
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Confirm Game", "ConfirmGame", new { id = item.Id, confirming = true })
+                        }
+                    </td>
+                }
+            </tr>
+        }
+
+    </table>
+</div>

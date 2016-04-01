@@ -2,7 +2,16 @@
 
 @{
     ViewBag.Title = "Games";
+
+    ViewBag.PageHeader = "Game Management";
+    ViewBag.PageHeaderDescription = "Here Create new Game and View existing ones";
+
+    ViewBag.BreadCrumbs = new List<BeaversHockeyPortal.Models.BreadcrumbsDescription> {
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Manager Portal" },
+        new BeaversHockeyPortal.Models.BreadcrumbsDescription {Href  = string.Empty, Name = "Game", IsActive = true },
+    };
 }
+
 
 <div class="form-group">
     @Html.Partial("CreateGame", Model.GameCreateViewModel)

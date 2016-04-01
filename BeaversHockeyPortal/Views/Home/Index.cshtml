@@ -1,22 +1,17 @@
 ﻿@{
     ViewBag.Title = "Beavers Hockey Portal";
+
+    ViewBag.PageHeader = "Beavers Hockey Portal";
+    ViewBag.PageHeaderDescription = "Welcome to Beavers Hockey Portal";
+
+    ViewBag.BreadCrumbs = new List<BeaversHockeyPortal.Models.BreadcrumbsDescription>();
 }
 
-<div class="jumbotron">
-    <h1>Welcome to Beavers Hockey Portal</h1>
+<div class="page-header">
+    <h1></h1>
+    <p class="text-success"></p>
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Beavers</h2>
-    </div>
-    <div class="col-md-4">
-        <h2>Hockey</h2>
-    </div>
-    <div class="col-md-4">
-        <h2>Portal</h2>
-    </div>
-</div>
 @if (!this.User.Identity.IsAuthenticated)
 {
     <h1 class="alert alert-danger">Please Log In to see more content</h1>
