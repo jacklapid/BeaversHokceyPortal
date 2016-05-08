@@ -76,4 +76,15 @@ namespace BeaversHockeyPortal.Models
             }
         }
     }
+
+    public class PlayerModels
+    {
+        public string PlayerStatusFilter { get; set; }
+        public string PlayerPositionFilter { get; set; }
+        public string DisplayEntriesFilter { get; set; }
+        public string PageFilter { get; set; }
+
+        public IEnumerable<PlayerViewModels> Players { get; set; }
+
+    }
 }

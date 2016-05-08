@@ -11,6 +11,10 @@ namespace Utilities
 {
     public static class EnumHelper<T>
     {
+        /// <summary>
+        /// Convert enum to dictionary of Key:Id, Value: Name
+        /// </summary>
+        /// <returns></returns>
         public static Dictionary<int, String> ToDictionary()
         {
             var type = typeof(T);

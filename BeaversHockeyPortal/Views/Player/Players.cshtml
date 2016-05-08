@@ -1,4 +1,6 @@
-﻿@model IEnumerable<BeaversHockeyPortal.Models.PlayerViewModels>
+﻿@using BeaversHockeyPortal.WebUtilities
+
+@model BeaversHockeyPortal.Models.PlayerModels
 @{
     ViewBag.Title = "Players";
     ViewBag.PageHeader = "Players";
@@ -9,8 +11,6 @@
     };
 }
 
-
-
 @if (this.User.IsInRole(Utilities.Constants.MANAGER_ROLE) || this.User.IsInRole(Utilities.Constants.ADMIN_ROLE))
 {
     <div class="panel panel-default">
@@ -19,8 +19,33 @@
         </div>
     </div>
 }
+<form>
+    <div class="row">
+        <div class="col-md-offset-5 col-md-2" id="PlayerStatusFilter">
+            @Html.Partial("~/views/reusablecomponents/filterelement.cshtml", new BeaversHockeyPortal.Models.FilterElementModel()
+       {
+           Items = Utilities.EnumHelper<DataModel.Enums.PlayerStatusEnum>.ToDictionary().ToSelectListItems<int>(),
+           SelectedValue = Model.PlayerStatusFilter,
+           ModelElementName = "PlayerStatusFilter"
+       })
 
-@foreach (var player in Model)
+        </div>
+        <div class="col-md-2" id="PlayerPositionFilter">
+            @Html.Partial("~/views/reusablecomponents/filterelement.cshtml", new BeaversHockeyPortal.Models.FilterElementModel()
+       {
+           Items = Utilities.EnumHelper<DataModel.Enums.PlayerPositionEnum>.ToDictionary().ToSelectListItems<int>(),
+           SelectedValue = Model.PlayerPositionFilter,
+           ModelElementName = "PlayerPositionFilter"
+       })
+        </div>
+        <div class="col-md-1">
+            <input type="submit" value="ApplyFilters" class="btn btn-default btn-md" Ac />
+        </div>
+    </div>
+
+</form>
+
+@foreach (var player in Model.Players)
 {
     <div class="row panel panel-default" style="margin-top:25px">
         <div class="panel-heading">@player.FullName</div>
@@ -28,11 +53,11 @@
             <div class="col-md-4 col-sm-4 col-xs-12 img-responsive text-center">
                 @if (player.PositionId == (int)DataModel.Enums.PlayerPositionEnum.Goalie)
                 {
-                    <img src="~/Images/goalie.png" class="img-thumbnail" />
+                <img src="~/Images/goalie.png" class="img-thumbnail" />
                 }
                 else
                 {
-                    <img src="~/Images/player.jpg" class="img-thumbnail" />
+                <img src="~/Images/player.jpg" class="img-thumbnail" />
                 }
             </div>
             <div class="col-md-8 col-sm-8 col-xs-12">
@@ -40,30 +65,30 @@
                     <table class="table table-striped table-hover table-condensed">
                         @if (this.User.IsInRole(Utilities.Constants.MANAGER_ROLE) || this.User.IsInRole(Utilities.Constants.ADMIN_ROLE))
                         {
-                            <tr>
-                                <td class="text-primary">
-                                    USERNAME
-                                </td>
-                                <td>
-                                    @player.Username
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="text-primary">
-                                    EMAIL
-                                </td>
-                                <td>
-                                    @player.Email
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Status
-                                </td>
-                                <td>
-                                    @player.Status
-                                </td>
-                            </tr>
+                        <tr>
+                            <td class="text-primary">
+                                USERNAME
+                            </td>
+                            <td>
+                                @player.Username
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-primary">
+                                EMAIL
+                            </td>
+                            <td>
+                                @player.Email
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Status
+                            </td>
+                            <td>
+                                @player.Status
+                            </td>
+                        </tr>
                         }
                         <tr>
                             <td>
@@ -116,4 +141,16 @@
         </div>
     </div>
 }
+
+
+@section Scripts {
+    <script type="text/JavaScript" src="~/js/filterElement.js"> </script>
+    <script type="text/JavaScript">
+        $(document).ready(function () {
+            new filtering("PlayerStatusFilter", "Player Status: ").init();
+            new filtering("PlayerPositionFilter", "Player Position: ").init();
+        });
+    </script>
+}
+
 

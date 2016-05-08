@@ -108,8 +108,7 @@ namespace BeaversHockeyPortal.Controllers
             return managers
                 .SelectMany(m => repo.GetPlayersForManager(m.Id))
                 .Where(p => p != null)
-                .Distinct()
-                .ToList();
+                .Distinct();
         }
 
         public static IEnumerable<Person> GetUsersInScope(string userId, IRepository repo)

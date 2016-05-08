@@ -28,15 +28,13 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading form-group ">
-                    <div>
                         @Html.Label("Email Event Type: ")
-                    </div>
-                    <div style="padding-left:25px">
+                    <div class="btn-group btn-group-md" data-toggle="buttons" style="padding-left:25px">
                         @foreach (var value in Enum.GetValues(typeof(BeaversHockeyPortal.Models.EmailEventType)))
                         {
-                            @Html.RadioButtonFor(model => model.EmailEventType, value, htmlAttributes: new { @class = "emailEventSelectionRadio" })
-                            @Html.Label(value.ToString())
-                            <br />
+                            <label class="btn btn-success  emailEventSelectionRadio">
+                                <input name="EmailEventType" type="radio" value="@value">@value
+                            </label>
                         }
                     </div>
                 </div>
@@ -90,10 +88,17 @@
             var value = '@Model.EmailEventType';
 
             toggleToSelection(value);
+
+            // set active
+            var radioButton = $(".emailEventSelectionRadio input[value='" + value + "']");
+            if (radioButton)
+            {
+                radioButton.parent().addClass('active');
+            }
         });
 
         $('.emailEventSelectionRadio').change(function () {
-            var value = $(this).val()
+            var value = $(this).children(":first").val();
 
             toggleToSelection(value);
         });

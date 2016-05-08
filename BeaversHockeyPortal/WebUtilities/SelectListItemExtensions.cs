@@ -30,6 +30,18 @@ namespace BeaversHockeyPortal.WebUtilities
             .ToList();
         }
 
+        public static List<SelectListItem> ToSelectListItems<KeyT>(this Dictionary<KeyT, string> dic)
+        {
+            return dic.Select(kvp => new SelectListItem
+            {
+                Text = kvp.Value.ToString(),
+                Value = kvp.Key.ToString()
+            })
+            .OrderBy(x => x.Text)
+            .ToList();
+        }
+
+
         private static List<SelectListItem> ToSelectListItems<T>(this List<T> list)
         {
             var selectedListItems = new List<SelectListItem>(list.Count());

@@ -227,6 +227,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\BreadcrumbsDescription.cs" />
     <Compile Include="Models\EmailViewModels.cs" />
+    <Compile Include="Models\FilterElementModel.cs" />
     <Compile Include="Models\GameViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\NoteViewModels.cs" />
@@ -250,7 +251,8 @@
     <Content Include="Images\defaultTeam.png" />
     <Content Include="Images\goalie.png" />
     <Content Include="Images\player.jpg" />
-    <Content Include="js\common.js" />
+    <Content Include="js\filterElement.js" />
+    <Content Include="js\site.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Properties\PublishProfiles\BeaversHockeyPortal - FTP.pubxml" />
@@ -315,6 +317,7 @@
     <Content Include="Views\EmailEvent\Events.cshtml" />
     <Content Include="Views\EmailEvent\Create.cshtml" />
     <Content Include="Views\Player\CreatePlayerRegistration.cshtml" />
+    <Content Include="Views\ReusableComponents\FilterElement.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

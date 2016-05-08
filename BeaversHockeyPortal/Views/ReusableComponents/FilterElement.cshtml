@@ -1,0 +1,23 @@
+﻿@model BeaversHockeyPortal.Models.FilterElementModel
+@{
+    var selectedItem = Model.Items.FirstOrDefault(item => item.Value == Model.SelectedValue);
+
+    var selectedText = selectedItem != null ? selectedItem.Text : string.Empty;
+}
+
+<div class="TopFilteringParent">
+    <input type="text" name="@Model.ModelElementName" value="@Model.SelectedValue" class="FilterValueInput" hidden="hidden"/>
+    <div class="btn btn-success btn-sm" data-toggle="dropdown">
+        <span selectedText="@selectedText" class="FilteringText"></span>
+        <span class="caret"></span>
+    </div>
+    <ul class="dropdown-menu FilteringElement">
+        @foreach (var item in Model.Items)
+        {
+            <li value="@item.Value"><a href="#" tabindex="-1">@item.Text</a></li>
+        }
+        <li class="divider"></li>
+        <li value="0"><a href="#" tabindex="-1">Clear</a></li>
+    </ul>
+</div>
+
